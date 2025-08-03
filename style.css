@@ -72,34 +72,36 @@ header h1 {
 #filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1rem;
   background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 0.8rem;
+  border-radius: 6px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 1.5rem;
 }
 
 /* Each filter group */
 #filters > div {
-  flex: 1 1 200px;
-  min-width: 180px;
-  max-height: 320px;
+  flex: 1 1 150px;
+  min-width: 140px;
+  max-height: 220px;
   overflow-y: auto;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
   background-color: #fafafa;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
 }
 
 /* Filter group heading */
 #filters h3 {
   margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+  font-size: 1rem;
   font-weight: 600;
   border-bottom: 1px solid #ccc;
-  padding-bottom: 0.3em;
+  padding-bottom: 0.25em;
   position: sticky;
   top: 0;
   background-color: #fafafa;
@@ -109,8 +111,8 @@ header h1 {
 /* Checkbox labels */
 label {
   display: block;
-  margin-bottom: 0.3rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.85rem;
   cursor: pointer;
   user-select: none;
 }
@@ -125,9 +127,9 @@ label input[type="checkbox"] {
 
 /* Year inputs */
 #year-filter-section input {
-  width: 80px;
-  padding: 0.3em 0.5em;
-  font-size: 0.9rem;
+  width: 70px;
+  padding: 0.25em 0.4em;
+  font-size: 0.85rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-right: 0.5em;

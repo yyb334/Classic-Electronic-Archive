@@ -1,4 +1,3 @@
-// Global state for all songs and selected filters
 let allSongs = [];
 const selectedFilters = {
   tags: [],
@@ -20,6 +19,21 @@ async function fetchSongs() {
   return await response.json();
 }
 
+// Get unique tags excluding pure 4-digit year tags
+function getUniqueTags() {
+  const allTags = new Set();
+
+  allSongs.forEach(song => {
+    (song.tags || []).forEach(tag => {
+      if (!/^\d{4}$/.test(tag)) { // exclude pure year tags
+        allTags.add(tag);
+      }
+    });
+  });
+
+  return Array.from(allTags).sort();
+}
+
 // Utility: Get unique values for a field (handles arrays or single values)
 function getUniqueValues(field) {
   const values = new Set();
@@ -32,30 +46,25 @@ function getUniqueValues(field) {
   return Array.from(values).sort();
 }
 
-// Core filtering function with group override to calculate dynamic counts
+// Filter songs with override values for a single group to calculate counts properly
 function filterSongsWithOverride(group, overrideValues) {
   return allSongs.filter(song => {
-    // Tags
     const tagsToCheck = group === 'tags' ? overrideValues : selectedFilters.tags;
     if (tagsToCheck.length && !tagsToCheck.some(t => (song.tags || []).includes(t))) return false;
 
-    // Countries
     const countriesToCheck = group === 'countries' ? overrideValues : selectedFilters.countries;
     if (countriesToCheck.length && !countriesToCheck.includes(song.country)) return false;
 
-    // Artists
     const artistsToCheck = group === 'artists' ? overrideValues : selectedFilters.artists;
     if (artistsToCheck.length && !artistsToCheck.includes(song.artist)) return false;
 
-    // Genres
     const genresToCheck = group === 'genres' ? overrideValues : selectedFilters.genres;
     if (genresToCheck.length && !genresToCheck.some(g => (song.genre || []).includes(g))) return false;
 
-    // Subgenres
     const subgenresToCheck = group === 'subgenres' ? overrideValues : selectedFilters.subgenres;
     if (subgenresToCheck.length && !subgenresToCheck.some(sg => (song.subgenre || []).includes(sg))) return false;
 
-    // Year range (always uses selectedFilters for year filtering)
+    // Year filtering always uses the current selectedFilters (not overridden here)
     if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
     if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
 
@@ -69,16 +78,13 @@ function renderCheckboxFilterWithCounts(containerId, allValues, group) {
   container.innerHTML = '';
 
   allValues.forEach(value => {
-    // Calculate count if this filter option toggled ON/OFF
     const currentlySelected = selectedFilters[group];
     let override;
 
     if (currentlySelected.includes(value)) {
-      // Count if toggled OFF
-      override = currentlySelected.filter(v => v !== value);
+      override = currentlySelected.filter(v => v !== value); // toggling off
     } else {
-      // Count if toggled ON
-      override = [...currentlySelected, value];
+      override = [...currentlySelected, value]; // toggling on
     }
 
     const filteredSongs = filterSongsWithOverride(group, override);
@@ -103,21 +109,21 @@ function renderCheckboxFilterWithCounts(containerId, allValues, group) {
     });
 
     label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(`${value} (${count})`));
+    label.appendChild(document.createTextNode(` ${value} (${count})`));
     container.appendChild(label);
   });
 }
 
 // Render all filters (tags, country, artist, genre, subgenre)
 function renderAllFilters() {
-  renderCheckboxFilterWithCounts('tag-list', getUniqueValues('tags'), 'tags');
+  renderCheckboxFilterWithCounts('tag-list', getUniqueTags(), 'tags');
   renderCheckboxFilterWithCounts('country-list', getUniqueValues('country'), 'countries');
   renderCheckboxFilterWithCounts('artist-list', getUniqueValues('artist'), 'artists');
   renderCheckboxFilterWithCounts('genre-list', getUniqueValues('genre'), 'genres');
   renderCheckboxFilterWithCounts('subgenre-list', getUniqueValues('subgenre'), 'subgenres');
 }
 
-// Render single song list item
+// Render a single song item
 function renderSong(song) {
   const li = document.createElement('li');
 
@@ -141,7 +147,7 @@ function renderSong(song) {
   return li;
 }
 
-// Populate song list in DOM
+// Load filtered songs to the DOM
 function loadSongList(songs) {
   const container = document.getElementById('song-list');
   container.innerHTML = '';
@@ -154,24 +160,17 @@ function loadSongList(songs) {
   songs.forEach(song => container.appendChild(renderSong(song)));
 }
 
-// Apply all filters and sorting, then update song list
+// Apply all filters and sorting, then update list
 function applyFilters() {
   let filtered = allSongs.filter(song => {
-    // Tags (OR within selected tags)
-    if (selectedFilters.tags.length && !selectedFilters.tags.some(tag => (song.tags || []).includes(tag))) return false;
-    // Countries
+    if (selectedFilters.tags.length && !selectedFilters.tags.some(t => (song.tags || []).includes(t))) return false;
     if (selectedFilters.countries.length && !selectedFilters.countries.includes(song.country)) return false;
-    // Artists
     if (selectedFilters.artists.length && !selectedFilters.artists.includes(song.artist)) return false;
-    // Genres
     if (selectedFilters.genres.length && !selectedFilters.genres.some(g => (song.genre || []).includes(g))) return false;
-    // Subgenres
     if (selectedFilters.subgenres.length && !selectedFilters.subgenres.some(sg => (song.subgenre || []).includes(sg))) return false;
-    // Year range
     if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
     if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
 
-    // Search text
     if (currentSearchQuery) {
       const text = currentSearchQuery.toLowerCase();
       const inTitle = song.title.toLowerCase().includes(text);
@@ -182,7 +181,7 @@ function applyFilters() {
     return true;
   });
 
-  // Sort results
+  // Sort
   filtered.sort((a, b) => {
     let valA, valB;
     if (currentSortBy === 'title') {
@@ -195,7 +194,6 @@ function applyFilters() {
       valA = a.releaseYear || 0;
       valB = b.releaseYear || 0;
     }
-
     if (valA < valB) return ascending ? -1 : 1;
     if (valA > valB) return ascending ? 1 : -1;
     return 0;
@@ -204,7 +202,7 @@ function applyFilters() {
   loadSongList(filtered);
 }
 
-// Setup event listeners for search, sort, year inputs, clear filters
+// Setup UI event listeners
 function setupControls() {
   const searchInput = document.getElementById('search-bar');
   searchInput.addEventListener('input', () => {
@@ -244,7 +242,6 @@ function setupControls() {
 
   const clearFiltersBtn = document.getElementById('clear-filters');
   clearFiltersBtn.addEventListener('click', () => {
-    // Clear all selected filters and inputs
     Object.keys(selectedFilters).forEach(key => {
       if (Array.isArray(selectedFilters[key])) selectedFilters[key] = [];
       else selectedFilters[key] = null;
@@ -265,7 +262,6 @@ function setupControls() {
 // Initialize app
 async function init() {
   allSongs = await fetchSongs();
-
   renderAllFilters();
   setupControls();
   applyFilters();
