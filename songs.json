@@ -189,6 +189,27 @@
   "genre": "Trance",
   "subgenre": "Tech Trance",
   "youtube": ["https://www.youtube.com/watch?v=FcuzivKLzAE"]
+},
+{
+  "id": "ferry-corsten-stay-awake",
+  "title": "Stay Awake",
+  "artist": "Ferry Corsten",
+  "tags": ["trance", "uplifting", "2000s", "vocal", "anthemic"],
+  "description": "Released in 2006 as part of the 'L.E.F.' era, 'Stay Awake' is a high-energy vocal trance track that blends Ferry Corsten’s signature layered synths with an emotionally charged vocal topline. The track balances melody and club power, using gated pads, rising arpeggios, and a thunderous drop that made it a favorite in Ferry’s live sets. It captures the energetic optimism that defined mid-2000s trance, while showcasing Ferry’s polished production and catchy, radio-friendly edge.",
+  "releaseYear": 2006,
+  "label": "Flashover Recordings",
+  "album": "L.E.F.",
+  "country": "Netherlands",
+  "artistBorn": 1973,
+  "artistPrimaryGenre": "Trance",
+  "aliases": ["System F", "Moonman", "Pulp Victim"],
+  "chartInfo": "Received strong club rotation across Europe but was not released as a standalone single. Featured on multiple compilations and live sets.",
+  "synths": ["Access Virus TI", "Korg Triton", "Roland JP-8000"],
+  "drums": "Heavy kick with gated snare hits, sidechained supersaw pads, rhythmic percussive synth pulses",
+  "influences": ["BT", "New Order", "Ferry Corsten"],
+  "genre": "Trance",
+  "subgenre": "Vocal Trance",
+  "youtube": ["https://www.youtube.com/watch?v=Q6rB3gfAvyw"]
 }
 
  
