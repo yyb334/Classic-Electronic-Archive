@@ -1,0 +1,130 @@
+/* Base styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: #f9f9f9;
+  color: #222;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+header {
+  background-color: #111;
+  color: #fff;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* Section headers */
+section h2, section h3 {
+  margin-top: 2rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.4rem;
+}
+
+/* Search & filters */
+#filters, #decade-filters, #sort {
+  margin-bottom: 2rem;
+}
+
+#search-bar {
+  padding: 0.6rem 1rem;
+  width: 100%;
+  max-width: 400px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+/* Buttons */
+button {
+  margin: 0.3rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #555;
+}
+
+/* Song list */
+#song-list {
+  list-style: none;
+  padding: 0;
+}
+
+#song-list li {
+  background: white;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+}
+
+#song-list a {
+  font-weight: 600;
+  color: #0074d9;
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+
+#song-list a:hover {
+  text-decoration: underline;
+}
+
+/* Tag styling */
+.tag {
+  display: inline-block;
+  background-color: #eee;
+  color: #444;
+  padding: 4px 8px;
+  margin: 4px 4px 0 0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* Tag stats list */
+#tag-counts {
+  list-style-type: none;
+  padding: 0;
+  font-size: 0.95rem;
+  columns: 2;
+  column-gap: 2rem;
+}
+
+#tag-counts li {
+  margin-bottom: 0.4rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  main {
+    padding: 1rem;
+  }
+
+  #tag-counts {
+    columns: 1;
+  }
+}

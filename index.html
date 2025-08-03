@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classic Electronic Archive</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Classic Electronic Archive</h1>
+  </header>
+
+  <main>
+    <!-- Sort section -->
+    <section id="sort">
+      <label for="sort-select"><strong>Sort by:</strong></label>
+      <select id="sort-select">
+        <option value="title">Title</option>
+        <option value="artist">Artist</option>
+        <option value="year">Release Year</option>
+      </select>
+      <button id="sort-direction">↑ Ascending</button>
+    </section>
+
+    <!-- Decade filter buttons -->
+    <section id="decade-filters">
+      <h2>Filter by Decade</h2>
+      <div id="decade-buttons"></div>
+    </section>
+
+    <!-- Search + tag filters -->
+    <section id="filters">
+      <h2>Search and Tag Filters</h2>
+      <input type="text" id="search-bar" placeholder="Search by title or artist..." />
+    </section>
+
+    <!-- Advanced filters -->
+    <section id="advanced-filters">
+      <h2>Advanced Filters</h2>
+      <label for="country-filter">Country:</label>
+      <select id="country-filter">
+        <option value="">All</option>
+      </select>
+      <button id="clear-tag-filter">Clear Tag Filter</button>
+    </section>
+
+    <!-- Songs list -->
+    <section id="songs">
+      <h2>Song List</h2>
+      <ul id="song-list"></ul>
+    </section>
+
+    <!-- Tag frequency stats -->
+    <section id="tag-stats">
+      <h2>Tag Statistics</h2>
+      <ul id="tag-counts"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

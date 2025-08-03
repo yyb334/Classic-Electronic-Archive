@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Song Details</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1 id="song-title">Loading...</h1>
+  </header>
+
+  <main id="song-details">
+    <a href="index.html" id="back-button">← Back to Song List</a>
+    <!-- Song details will be loaded here -->
+  </main>
+
+  <script>
+    async function loadSongDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const songId = params.get('id');
+
+      const response = await fetch('songs.json');
+      const songs = await response.json();
+      const song = songs.find(s => s.id === songId);
+
+      if (!song) {
+        document.getElementById('song-title').textContent = "Song Not Found";
+        return;
+      }
+
+      document.getElementById('song-title').textContent = `${song.title} – ${song.artist}`;
+
+      const details = document.getElementById('song-details');
+      details.innerHTML = `
+  <a href="index.html" id="back-button">← Back to Song List</a>
+  <p><strong>Description:</strong> ${song.description}</p>
+  <p><strong>Release Year:</strong> ${song.releaseYear}</p>
+  <p><strong>Label:</strong> ${song.label ?? "N/A"}</p>
+  <p><strong>Album:</strong> ${song.album ?? "N/A"}</p>
+  <p><strong>Country:</strong> ${song.country}</p>
+  <p><strong>Artist Born:</strong> ${song.artistBorn}</p>
+  <p><strong>Primary Genre:</strong> ${song.artistPrimaryGenre}</p>
+  <p><strong>Aliases:</strong> ${song.aliases.join(", ")}</p>
+  <p><strong>Chart Info:</strong> ${song.chartInfo}</p>
+  <p><strong>Synths Used:</strong> ${song.synths.join(", ")}</p>
+  <p><strong>Drums/Rhythms:</strong> ${song.drums}</p>
+  <p><strong>Influences:</strong> ${song.influences.join(", ")}</p>
+  <p><strong>Genre:</strong> ${song.genre}</p>
+  <p><strong>Subgenre:</strong> ${song.subgenre}</p>
+  <p><strong>YouTube:</strong> <a href="${song.youtube}" target="_blank">Listen on YouTube</a></p>
+`;
+    }
+
+    loadSongDetails();
+  </script>
+</body>
+</html>
