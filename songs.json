@@ -379,9 +379,50 @@
   "subgenre": "Breakbeat Hardcore",
   "youtube": ["https://www.youtube.com/watch?v=6KHt1gYqBsE"]
    },
-   
+   {
+  "id": "vibes-and-wishdokta-fantasia",
+  "title": "Fantasia",
+  "artist": "Vibes & Wishdokta",
+  "tags": ["happy hardcore", "rave", "uk", "1990s", "breakbeat"],
+  "description": "‘Fantasia’ by Vibes & Wishdokta is a beloved happy hardcore anthem from the golden age of mid-90s UK rave. It blends fast breakbeats, uplifting melodies, and pitched-up vocal samples to create an ecstatic, hands-in-the-air atmosphere. Vibes & Wishdokta were key figures in shaping the cheerful, euphoric sound of happy hardcore, and 'Fantasia' remains one of their most iconic collaborations, often played at massive events like Dreamscape and Helter Skelter.",
+  "releaseYear": 1995,
+  "label": "Asylum / United Dance",
+  "album": "N/A",
+  "country": "United Kingdom",
+  "artistBorn": 1970,
+  "artistPrimaryGenre": "Happy Hardcore",
+  "aliases": ["DJ Vibes", "Jimmy J & Cru-L-T", "Dougal & Vibes"],
+  "chartInfo": "Underground anthem in the UK rave circuit; featured on numerous tape packs and old-skool compilations.",
+  "synths": ["Roland JD-800", "Yamaha SY85", "Akai S3000"],
+  "drums": "Fast breakbeat loops layered over 4/4 kicks, clap snares, hi-hat rushes",
+  "influences": ["Slipmatt", "Dougal", "Seduction"],
+  "genre": "Hardcore",
+  "subgenre": "Happy Hardcore",
+  "youtube": ["https://www.youtube.com/watch?v=UO4-lpWLK9k"]
+   },
+   {
+  "id": "the-trip-check-one-pavillion-mix",
+  "title": "Check One (Pavillion Mix)",
+  "artist": "The Trip",
+  "tags": ["breakbeat", "hardcore", "1990s", "uk", "rave"],
+  "description": "‘Check One (Pavillion Mix)’ by The Trip is a gritty breakbeat hardcore tune from the early 90s UK rave scene. Known for its chopped-up breaks, deep sub-bass, and vocal samples calling to 'check one,' it captures the raw warehouse energy of the era. The Pavillion Mix in particular adds darker stabs and a more hypnotic breakdown, making it a favorite among DJs playing deeper or more underground sets during peak rave culture.",
+  "releaseYear": 1992,
+  "label": "D-Zone Records",
+  "album": "N/A",
+  "country": "United Kingdom",
+  "artistBorn": null,
+  "artistPrimaryGenre": "Breakbeat Hardcore",
+  "aliases": ["DJ HMS", "The Hypnotist (related label artist)"],
+  "chartInfo": "Cult favorite in UK rave circles; released on the influential D-Zone label known for raw underground rave music.",
+  "synths": ["Roland Alpha Juno", "Akai S950", "Korg M1"],
+  "drums": "Chopped breakbeats, reverb-heavy claps, deep distorted kicks",
+  "influences": ["The Hypnotist", "Sonz of a Loop Da Loop Era", "Acen"],
+  "genre": "Hardcore",
+  "subgenre": "Breakbeat Hardcore",
+  "youtube": ["https://www.youtube.com/watch?v=VJ0ifIb1U28"]
+   },
 
- 
+
 
   
 ]
