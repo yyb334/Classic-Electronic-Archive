@@ -2,9 +2,129 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Classic Electronic Archive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Classic Electronic Archive - Advanced Multi-Filters</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Basic styling for layout */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 1rem;
+      background: #fafafa;
+      color: #222;
+    }
+    header h1 {
+      margin-bottom: 1rem;
+    }
+    #search-sort {
+      margin-bottom: 1rem;
+    }
+    #search-bar {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.5em;
+      font-size: 1em;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+    }
+    #sort-select, #sort-direction {
+      font-size: 1em;
+      padding: 0.3em 0.6em;
+      margin-right: 0.5em;
+    }
+    #filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+    }
+    #filters > div {
+      flex: 1 1 200px;
+      min-width: 180px;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 0.5rem;
+      background: #fefefe;
+    }
+    #filters h3 {
+      margin-top: 0;
+      font-size: 1.1em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3em;
+      margin-bottom: 0.5em;
+      position: sticky;
+      top: 0;
+      background: #fefefe;
+      z-index: 1;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.25em;
+      cursor: pointer;
+      font-size: 0.9em;
+      user-select: none;
+    }
+    label input[type="checkbox"] {
+      margin-right: 0.5em;
+      cursor: pointer;
+    }
+    #year-filter-section input {
+      width: 80px;
+      padding: 0.3em;
+      margin-right: 0.5em;
+      font-size: 0.9em;
+      box-sizing: border-box;
+    }
+    #clear-filters {
+      padding: 0.6em 1.2em;
+      font-size: 1em;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: white;
+      margin-bottom: 1.5rem;
+      transition: background 0.3s;
+    }
+    #clear-filters:hover {
+      background: #0056b3;
+    }
+    #song-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    #song-list li {
+      padding: 0.4em 0;
+      border-bottom: 1px solid #ddd;
+    }
+    #song-list li a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+    #song-list li a:hover {
+      text-decoration: underline;
+    }
+    #song-list div.tag-container {
+      margin-top: 0.3em;
+    }
+    .tag {
+      display: inline-block;
+      background: #ddd;
+      color: #333;
+      border-radius: 3px;
+      padding: 0.15em 0.5em;
+      margin-right: 0.3em;
+      font-size: 0.8em;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -12,50 +132,65 @@
   </header>
 
   <main>
-    <!-- Sort section -->
-    <section id="sort">
+    <!-- Search and Sort Controls -->
+    <section id="search-sort">
+      <input type="text" id="search-bar" placeholder="Search by title or artist..." aria-label="Search songs by title or artist" />
       <label for="sort-select"><strong>Sort by:</strong></label>
-      <select id="sort-select">
+      <select id="sort-select" aria-label="Sort songs">
         <option value="title">Title</option>
         <option value="artist">Artist</option>
         <option value="year">Release Year</option>
       </select>
-      <button id="sort-direction">↑ Ascending</button>
+      <button id="sort-direction" aria-label="Toggle sort direction">↑ Ascending</button>
     </section>
 
-    <!-- Decade filter buttons -->
-    <section id="decade-filters">
-      <h2>Filter by Decade</h2>
-      <div id="decade-buttons"></div>
-    </section>
+    <!-- Advanced Filters -->
+    <section id="filters" aria-label="Advanced filter options">
+      <div id="tag-filter">
+        <h3>Tags</h3>
+        <div id="tag-list" role="group" aria-label="Filter by tags"></div>
+      </div>
 
-    <!-- Search + tag filters -->
-    <section id="filters">
-      <h2>Search and Tag Filters</h2>
-      <input type="text" id="search-bar" placeholder="Search by title or artist..." />
-      <div id="tag-list" style="margin-top: 0.5em;">
-        <!-- Tag buttons will be inserted here -->
+      <div id="country-filter-section">
+        <h3>Country</h3>
+        <div id="country-list" role="group" aria-label="Filter by country"></div>
+      </div>
+
+      <div id="artist-filter-section">
+        <h3>Artist</h3>
+        <div id="artist-list" role="group" aria-label="Filter by artist"></div>
+      </div>
+
+      <div id="genre-filter-section">
+        <h3>Genre</h3>
+        <div id="genre-list" role="group" aria-label="Filter by genre"></div>
+      </div>
+
+      <div id="subgenre-filter-section">
+        <h3>Subgenre</h3>
+        <div id="subgenre-list" role="group" aria-label="Filter by subgenre"></div>
+      </div>
+
+      <div id="year-filter-section">
+        <h3>Year</h3>
+        <input type="number" id="year-min" placeholder="From year" min="1900" max="2100" aria-label="Minimum year" />
+        <input type="number" id="year-max" placeholder="To year" min="1900" max="2100" aria-label="Maximum year" />
       </div>
     </section>
 
-    <!-- Advanced filters -->
-    <section id="advanced-filters">
-      <h2>Advanced Filters</h2>
-      <label for="country-filter">Country:</label>
-      <select id="country-filter">
-        <option value="">All</option>
-      </select>
-      <button id="clear-tag-filter">Clear Tag Filter</button>
+    <!-- Clear Filters Button -->
+    <section>
+      <button id="clear-filters" aria-label="Clear all filters">Clear All Filters</button>
     </section>
 
-    <!-- Songs list -->
-    <section id="songs">
+    <!-- Song List -->
+    <section id="songs" aria-live="polite" aria-relevant="additions">
       <h2>Song List</h2>
       <ul id="song-list"></ul>
     </section>
 
-    <!-- Tag frequency stats -->
-    <section id="tag-stats">
+    <!-- Tag Stats (optional) -->
+    <section id="tag-stats" style="margin-top: 2rem;">
       <h2>Tag Statistics</h2>
       <ul id="tag-counts"></ul>
     </section>

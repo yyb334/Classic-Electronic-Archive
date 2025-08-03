@@ -1,72 +1,123 @@
+// Global state for all songs and selected filters
 let allSongs = [];
-let currentDecade = null;
+const selectedFilters = {
+  tags: [],
+  countries: [],
+  artists: [],
+  genres: [],
+  subgenres: [],
+  yearMin: null,
+  yearMax: null,
+};
 let currentSearchQuery = '';
 let currentSortBy = 'title';
 let ascending = true;
-let activeTags = [];
-let currentCountryFilter = '';
 
 // Fetch songs.json data
 async function fetchSongs() {
   const response = await fetch('songs.json');
-  if (!response.ok) {
-    throw new Error('Failed to load songs.json');
-  }
+  if (!response.ok) throw new Error('Failed to load songs.json');
   return await response.json();
 }
 
-// Create a tag button with count and toggle functionality
-function createTagButton(tag, count) {
-  const btn = document.createElement('button');
-  btn.innerHTML = `${tag} <small>(${count})</small>`;
-  btn.style.margin = '0 0.3em 0.3em 0';
-  btn.className = 'tag-button';
-
-  if (activeTags.includes(tag)) {
-    btn.classList.add('active');
-  }
-
-  btn.addEventListener('click', () => {
-    const idx = activeTags.indexOf(tag);
-    if (idx > -1) {
-      activeTags.splice(idx, 1);  // Remove tag
-    } else {
-      activeTags.push(tag);       // Add tag
-    }
-    applyFilters();
-    renderTagButtons();           // Refresh tag buttons
-  });
-
-  return btn;
-}
-
-// Render all tag buttons with counts
-function renderTagButtons() {
-  const tagContainer = document.getElementById('tag-list');
-  if (!tagContainer) return;
-
-  // Count how many songs have each tag (from all songs)
-  const tagCounts = {};
-
+// Utility: Get unique values for a field (handles arrays or single values)
+function getUniqueValues(field) {
+  const values = new Set();
   allSongs.forEach(song => {
-    if (Array.isArray(song.tags)) {
-      song.tags.forEach(tag => {
-        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-      });
-    }
+    let val = song[field];
+    if (!val) return;
+    if (Array.isArray(val)) val.forEach(v => values.add(v));
+    else values.add(val);
   });
+  return Array.from(values).sort();
+}
 
-  tagContainer.innerHTML = '';
+// Core filtering function with group override to calculate dynamic counts
+function filterSongsWithOverride(group, overrideValues) {
+  return allSongs.filter(song => {
+    // Tags
+    const tagsToCheck = group === 'tags' ? overrideValues : selectedFilters.tags;
+    if (tagsToCheck.length && !tagsToCheck.some(t => (song.tags || []).includes(t))) return false;
 
-  const sortedTags = Object.keys(tagCounts).sort();
+    // Countries
+    const countriesToCheck = group === 'countries' ? overrideValues : selectedFilters.countries;
+    if (countriesToCheck.length && !countriesToCheck.includes(song.country)) return false;
 
-  sortedTags.forEach(tag => {
-    const btn = createTagButton(tag, tagCounts[tag]);
-    tagContainer.appendChild(btn);
+    // Artists
+    const artistsToCheck = group === 'artists' ? overrideValues : selectedFilters.artists;
+    if (artistsToCheck.length && !artistsToCheck.includes(song.artist)) return false;
+
+    // Genres
+    const genresToCheck = group === 'genres' ? overrideValues : selectedFilters.genres;
+    if (genresToCheck.length && !genresToCheck.some(g => (song.genre || []).includes(g))) return false;
+
+    // Subgenres
+    const subgenresToCheck = group === 'subgenres' ? overrideValues : selectedFilters.subgenres;
+    if (subgenresToCheck.length && !subgenresToCheck.some(sg => (song.subgenre || []).includes(sg))) return false;
+
+    // Year range (always uses selectedFilters for year filtering)
+    if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
+    if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
+
+    return true;
   });
 }
 
-// Render individual song list item
+// Render checkbox filter options with dynamic counts
+function renderCheckboxFilterWithCounts(containerId, allValues, group) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  allValues.forEach(value => {
+    // Calculate count if this filter option toggled ON/OFF
+    const currentlySelected = selectedFilters[group];
+    let override;
+
+    if (currentlySelected.includes(value)) {
+      // Count if toggled OFF
+      override = currentlySelected.filter(v => v !== value);
+    } else {
+      // Count if toggled ON
+      override = [...currentlySelected, value];
+    }
+
+    const filteredSongs = filterSongsWithOverride(group, override);
+    const count = filteredSongs.length;
+
+    const label = document.createElement('label');
+    label.style.marginRight = '1em';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = value;
+    checkbox.checked = currentlySelected.includes(value);
+
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        selectedFilters[group].push(value);
+      } else {
+        selectedFilters[group] = selectedFilters[group].filter(v => v !== value);
+      }
+      applyFilters();
+      renderAllFilters();
+    });
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(`${value} (${count})`));
+    container.appendChild(label);
+  });
+}
+
+// Render all filters (tags, country, artist, genre, subgenre)
+function renderAllFilters() {
+  renderCheckboxFilterWithCounts('tag-list', getUniqueValues('tags'), 'tags');
+  renderCheckboxFilterWithCounts('country-list', getUniqueValues('country'), 'countries');
+  renderCheckboxFilterWithCounts('artist-list', getUniqueValues('artist'), 'artists');
+  renderCheckboxFilterWithCounts('genre-list', getUniqueValues('genre'), 'genres');
+  renderCheckboxFilterWithCounts('subgenre-list', getUniqueValues('subgenre'), 'subgenres');
+}
+
+// Render single song list item
 function renderSong(song) {
   const li = document.createElement('li');
 
@@ -76,6 +127,7 @@ function renderSong(song) {
   li.appendChild(link);
 
   const tagContainer = document.createElement('div');
+  tagContainer.className = 'tag-container';
   if (Array.isArray(song.tags)) {
     song.tags.forEach(tag => {
       const span = document.createElement('span');
@@ -89,177 +141,50 @@ function renderSong(song) {
   return li;
 }
 
-// Populate the song list in the DOM
+// Populate song list in DOM
 function loadSongList(songs) {
-  const songList = document.getElementById('song-list');
-  songList.innerHTML = '';
-  songs.forEach(song => songList.appendChild(renderSong(song)));
-}
+  const container = document.getElementById('song-list');
+  container.innerHTML = '';
 
-// Extract decades from tags
-function getDecades(songs) {
-  const decades = new Set();
-  for (const song of songs) {
-    for (const tag of song.tags || []) {
-      const match = tag.match(/^(\d{4})s$/);
-      if (match) {
-        decades.add(tag);
-      }
-    }
-  }
-  return Array.from(decades).sort();
-}
-
-// Render decade filter buttons
-function renderDecadeFilters(decades) {
-  const filterDiv = document.getElementById('decade-buttons');
-  filterDiv.innerHTML = '';
-
-  const allButton = document.createElement('button');
-  allButton.textContent = 'All';
-  allButton.addEventListener('click', () => {
-    currentDecade = null;
-    applyFilters();
-  });
-  filterDiv.appendChild(allButton);
-
-  decades.forEach(decade => {
-    const button = document.createElement('button');
-    button.textContent = decade;
-    button.addEventListener('click', () => {
-      currentDecade = decade;
-      applyFilters();
-    });
-    filterDiv.appendChild(button);
-  });
-}
-
-// Display tag statistics list (optional)
-function showTagStats(songs) {
-  const tagCounts = {};
-  for (const song of songs) {
-    for (const tag of song.tags || []) {
-      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-    }
-  }
-
-  const tagStatsList = document.getElementById('tag-counts');
-  tagStatsList.innerHTML = '';
-
-  const sortedTags = Object.keys(tagCounts).sort();
-  for (const tag of sortedTags) {
-    const li = document.createElement('li');
-    li.textContent = `${tag}: ${tagCounts[tag]}`;
-    tagStatsList.appendChild(li);
-  }
-}
-
-// Setup search bar listener
-function setupSearch() {
-  const searchInput = document.getElementById('search-bar');
-  searchInput.addEventListener('input', () => {
-    currentSearchQuery = searchInput.value.toLowerCase();
-    applyFilters();
-  });
-}
-
-// Setup sorting controls
-function setupSorting() {
-  const sortSelect = document.getElementById('sort-select');
-  const sortButton = document.getElementById('sort-direction');
-
-  if (!sortButton) {
-    console.error('Sort direction button not found in HTML');
+  if (songs.length === 0) {
+    container.textContent = 'No songs match the current filters.';
     return;
   }
 
-  sortSelect.addEventListener('change', () => {
-    currentSortBy = sortSelect.value;
-    applyFilters();
-  });
-
-  sortButton.addEventListener('click', () => {
-    ascending = !ascending;
-    sortButton.textContent = ascending ? '↑ Ascending' : '↓ Descending';
-    applyFilters();
-  });
+  songs.forEach(song => container.appendChild(renderSong(song)));
 }
 
-// Populate country dropdown filter
-function populateCountryFilter(songs) {
-  const countries = new Set();
-  for (const song of songs) {
-    if (song.country) {
-      countries.add(song.country);
-    }
-  }
-
-  const countrySelect = document.getElementById('country-filter');
-  if (!countrySelect) return;
-  
-  countrySelect.innerHTML = '<option value="">All</option>';
-  countries.forEach(country => {
-    const option = document.createElement('option');
-    option.value = country;
-    option.textContent = country;
-    countrySelect.appendChild(option);
-  });
-}
-
-// Setup advanced filters (country & clear tag button)
-function setupAdvancedFilters() {
-  const countrySelect = document.getElementById('country-filter');
-  if (countrySelect) {
-    countrySelect.addEventListener('change', () => {
-      currentCountryFilter = countrySelect.value;
-      applyFilters();
-    });
-  }
-  
-  const clearTagButton = document.getElementById('clear-tag-filter');
-  if (clearTagButton) {
-    clearTagButton.addEventListener('click', () => {
-      activeTags = [];
-      applyFilters();
-      renderTagButtons();
-    });
-  }
-}
-
-// Apply all filters and sorting, then display songs
+// Apply all filters and sorting, then update song list
 function applyFilters() {
-  let filtered = allSongs;
+  let filtered = allSongs.filter(song => {
+    // Tags (OR within selected tags)
+    if (selectedFilters.tags.length && !selectedFilters.tags.some(tag => (song.tags || []).includes(tag))) return false;
+    // Countries
+    if (selectedFilters.countries.length && !selectedFilters.countries.includes(song.country)) return false;
+    // Artists
+    if (selectedFilters.artists.length && !selectedFilters.artists.includes(song.artist)) return false;
+    // Genres
+    if (selectedFilters.genres.length && !selectedFilters.genres.some(g => (song.genre || []).includes(g))) return false;
+    // Subgenres
+    if (selectedFilters.subgenres.length && !selectedFilters.subgenres.some(sg => (song.subgenre || []).includes(sg))) return false;
+    // Year range
+    if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
+    if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
 
-  // Filter by decade
-  if (currentDecade) {
-    filtered = filtered.filter(song => (song.tags || []).includes(currentDecade));
-  }
+    // Search text
+    if (currentSearchQuery) {
+      const text = currentSearchQuery.toLowerCase();
+      const inTitle = song.title.toLowerCase().includes(text);
+      const inArtist = song.artist.toLowerCase().includes(text);
+      if (!inTitle && !inArtist) return false;
+    }
 
-  // Filter by search query
-  if (currentSearchQuery.trim() !== '') {
-    filtered = filtered.filter(song =>
-      song.title.toLowerCase().includes(currentSearchQuery) ||
-      song.artist.toLowerCase().includes(currentSearchQuery)
-    );
-  }
+    return true;
+  });
 
-  // Filter by multi-tag selection (AND logic)
-  if (activeTags.length > 0) {
-    filtered = filtered.filter(song => {
-      const songTags = song.tags || [];
-      return activeTags.every(tag => songTags.includes(tag));
-    });
-  }
-
-  // Filter by country
-  if (currentCountryFilter) {
-    filtered = filtered.filter(song => song.country === currentCountryFilter);
-  }
-
-  // Sorting
+  // Sort results
   filtered.sort((a, b) => {
     let valA, valB;
-
     if (currentSortBy === 'title') {
       valA = a.title.toLowerCase();
       valB = b.title.toLowerCase();
@@ -279,18 +204,71 @@ function applyFilters() {
   loadSongList(filtered);
 }
 
-// Initialization
+// Setup event listeners for search, sort, year inputs, clear filters
+function setupControls() {
+  const searchInput = document.getElementById('search-bar');
+  searchInput.addEventListener('input', () => {
+    currentSearchQuery = searchInput.value.trim();
+    applyFilters();
+    renderAllFilters();
+  });
+
+  const sortSelect = document.getElementById('sort-select');
+  sortSelect.addEventListener('change', () => {
+    currentSortBy = sortSelect.value;
+    applyFilters();
+  });
+
+  const sortButton = document.getElementById('sort-direction');
+  sortButton.addEventListener('click', () => {
+    ascending = !ascending;
+    sortButton.textContent = ascending ? '↑ Ascending' : '↓ Descending';
+    applyFilters();
+  });
+
+  const yearMinInput = document.getElementById('year-min');
+  yearMinInput.addEventListener('input', () => {
+    const val = parseInt(yearMinInput.value);
+    selectedFilters.yearMin = isNaN(val) ? null : val;
+    applyFilters();
+    renderAllFilters();
+  });
+
+  const yearMaxInput = document.getElementById('year-max');
+  yearMaxInput.addEventListener('input', () => {
+    const val = parseInt(yearMaxInput.value);
+    selectedFilters.yearMax = isNaN(val) ? null : val;
+    applyFilters();
+    renderAllFilters();
+  });
+
+  const clearFiltersBtn = document.getElementById('clear-filters');
+  clearFiltersBtn.addEventListener('click', () => {
+    // Clear all selected filters and inputs
+    Object.keys(selectedFilters).forEach(key => {
+      if (Array.isArray(selectedFilters[key])) selectedFilters[key] = [];
+      else selectedFilters[key] = null;
+    });
+    currentSearchQuery = '';
+    document.getElementById('search-bar').value = '';
+    document.getElementById('year-min').value = '';
+    document.getElementById('year-max').value = '';
+    document.getElementById('sort-select').value = 'title';
+    ascending = true;
+    document.getElementById('sort-direction').textContent = '↑ Ascending';
+
+    applyFilters();
+    renderAllFilters();
+  });
+}
+
+// Initialize app
 async function init() {
   allSongs = await fetchSongs();
-  loadSongList(allSongs);
-  const decades = getDecades(allSongs);
-  renderDecadeFilters(decades);
-  showTagStats(allSongs);
-  populateCountryFilter(allSongs);
-  setupSearch();
-  setupSorting();
-  setupAdvancedFilters();
-  renderTagButtons();
+
+  renderAllFilters();
+  setupControls();
+  applyFilters();
 }
 
 init();

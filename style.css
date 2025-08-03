@@ -1,156 +1,232 @@
-/* Base styles */
+/* General body and font */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  background-color: #f9f9f9;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
   color: #222;
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
+  margin: 1rem 2rem;
+  line-height: 1.5;
 }
 
-header {
-  background-color: #111;
-  color: #fff;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-h1 {
-  margin: 0;
-  font-size: 2rem;
+/* Header */
+header h1 {
   font-weight: 700;
-  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #1a1a1a;
 }
 
-main {
-  max-width: 900px;
-  margin: auto;
-  padding: 2rem;
-}
-
-/* Section headers */
-section h2, section h3 {
-  margin-top: 2rem;
-  font-size: 1.4rem;
-  font-weight: 600;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 0.4rem;
-}
-
-/* Search & filters */
-#filters, #decade-filters, #sort {
-  margin-bottom: 2rem;
+/* Search and sort section */
+#search-sort {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
 }
 
 #search-bar {
-  padding: 0.6rem 1rem;
-  width: 100%;
-  max-width: 400px;
+  flex: 1 1 300px;
+  padding: 0.5em 0.7em;
   font-size: 1rem;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-top: 0.5rem;
+  border-radius: 4px;
+  transition: border-color 0.2s ease-in-out;
 }
 
-/* Buttons */
-button {
-  margin: 0.3rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
-  background-color: #333;
+#search-bar:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Sort select and button */
+#sort-select {
+  padding: 0.4em 0.7em;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out;
+}
+
+#sort-select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+#sort-direction {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  padding: 0.4em 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#sort-direction:hover {
+  background-color: #0056b3;
+}
+
+/* Filters container */
+#filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+/* Each filter group */
+#filters > div {
+  flex: 1 1 200px;
+  min-width: 180px;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  background-color: #fafafa;
+}
+
+/* Filter group heading */
+#filters h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.3em;
+  position: sticky;
+  top: 0;
+  background-color: #fafafa;
+  z-index: 2;
+}
+
+/* Checkbox labels */
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Checkbox input styling */
+label input[type="checkbox"] {
+  margin-right: 0.5rem;
+  cursor: pointer;
+  transform: scale(1.1);
+  vertical-align: middle;
+}
+
+/* Year inputs */
+#year-filter-section input {
+  width: 80px;
+  padding: 0.3em 0.5em;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 0.5em;
+  transition: border-color 0.2s ease-in-out;
+}
+
+#year-filter-section input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Clear Filters button */
+#clear-filters {
+  background-color: #dc3545;
   color: white;
   border: none;
-  border-radius: 8px;
+  padding: 0.6em 1.3em;
+  border-radius: 6px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
+  margin-bottom: 1.5rem;
 }
 
-button:hover {
-  background-color: #555;
+#clear-filters:hover {
+  background-color: #a71d2a;
 }
 
-/* Song list */
+/* Song list styling */
 #song-list {
   list-style: none;
-  padding: 0;
+  padding-left: 0;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 #song-list li {
-  background: white;
-  margin: 1rem 0;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+  padding: 0.5em 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 1rem;
 }
 
-#song-list a {
+#song-list li a {
   font-weight: 600;
-  color: #0074d9;
+  color: #007bff;
   text-decoration: none;
-  font-size: 1.05rem;
+  transition: text-decoration 0.2s ease-in-out;
 }
 
-#song-list a:hover {
+#song-list li a:hover {
   text-decoration: underline;
 }
 
-/* Tag styling */
+/* Tag container inside song list item */
+.tag-container {
+  margin-top: 0.3em;
+}
+
 .tag {
   display: inline-block;
-  background-color: #eee;
+  background-color: #e1e1e1;
   color: #444;
-  padding: 4px 8px;
-  margin: 4px 4px 0 0;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  border-radius: 4px;
+  padding: 0.15em 0.5em;
+  margin-right: 0.4em;
+  font-size: 0.8rem;
+  user-select: none;
 }
 
-/* Tag stats list */
-#tag-counts {
-  list-style-type: none;
-  padding: 0;
-  font-size: 0.95rem;
-  columns: 2;
-  column-gap: 2rem;
+/* Scrollbar styling for filter groups (for modern browsers) */
+#filters > div::-webkit-scrollbar {
+  width: 8px;
 }
 
-#tag-counts li {
-  margin-bottom: 0.4rem;
-}
-
-/* Responsive tweaks */
-@media (max-width: 600px) {
-  main {
-    padding: 1rem;
-  }
-
-  #tag-counts {
-    columns: 1;
-  }
-}
-#tag-list button.tag-button {
-  padding: 0.3em 0.6em;
-  border: none;
-  background-color: #eee;
-  cursor: pointer;
-  border-radius: 3px;
-  font-size: 0.9em;
-  margin: 0 0.3em 0.3em 0;
-}
-
-#tag-list button.tag-button:hover {
+#filters > div::-webkit-scrollbar-thumb {
   background-color: #ccc;
+  border-radius: 4px;
 }
 
-#tag-list button.tag-button.active {
-  background-color: #bbb;
+#filters > div::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
 }
 
-.tag {
-  display: inline-block;
-  background-color: #ddd;
-  border-radius: 2px;
-  padding: 0.1em 0.3em;
-  margin-right: 0.3em;
-  font-size: 0.8em;
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  #filters {
+    flex-direction: column;
+  }
+
+  #filters > div {
+    max-height: 200px;
+  }
+
+  #search-sort {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #search-bar {
+    max-width: 100%;
+  }
 }
