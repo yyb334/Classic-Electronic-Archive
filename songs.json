@@ -253,47 +253,5 @@
   "subgenre": "Progressive Trance",
   "youtube": ["https://www.youtube.com/watch?v=J5uq7XOSnh0"]
    }
-  {
-  "id": "armin-van-buuren-destination",
-  "title": "Destination",
-  "artist": "Armin van Buuren",
-  "tags": ["trance", "uplifting", "2010s", "anthemic", "gaia"],
-  "description": "“Destination” is an energetic trance anthem from Armin van Buuren in collaboration with Gaia. It captures the signature Gaia style — dark, driving basslines, punchy trance rhythms, and melodic synth leads layered with cinematic tension. Often featured in Armin’s 'ASOT' sets and big-stage festival sets, this track is structured for peak-time power, balancing deep hypnotic grooves with emotional buildups. A perfect example of modern uplifting trance rooted in classic trance values.",
-  "releaseYear": 2014,
-  "label": "Armada Music",
-  "album": "A State of Trance 2014",
-  "country": "Netherlands",
-  "artistBorn": 1976,
-  "artistPrimaryGenre": "Trance",
-  "aliases": ["Gaia", "Rising Star", "Perpetuous Dreamer"],
-  "chartInfo": "Featured in the 'A State of Trance 2014' compilation; highly ranked in trance charts and DJ sets.",
-  "synths": ["Access Virus TI", "Sylenth1", "Roland JP-8080"],
-  "drums": "Punchy layered kick, gated snares, syncopated hi-hats, rolling basslines",
-  "influences": ["Ferry Corsten", "Tiesto (early)", "Jean-Michel Jarre"],
-  "genre": "Trance",
-  "subgenre": "Uplifting Trance",
-  "youtube": ["https://www.youtube.com/watch?v=7TTm8FhWfJU"]
-   },
-   {
-  "id": "ferry-corsten-fulfillment",
-  "title": "Fulfillment",
-  "artist": "Ferry Corsten",
-  "tags": ["trance", "instrumental", "2000s", "system f", "anthemic"],
-  "description": "Originally released under his System F alias, 'Fulfillment' is a deeply atmospheric trance instrumental that blends sweeping pads, rising melodic phrases, and powerful drops. It's less mainstream than Corsten’s vocal hits, but it remains a fan favorite for its immersive sound design and emotional progression. The track slowly builds from an ambient intro into a layered arpeggio climax, perfectly suited for extended sets and late-night club moments.",
-  "releaseYear": 2003,
-  "label": "Tsunami",
-  "album": "Together",
-  "country": "Netherlands",
-  "artistBorn": 1973,
-  "artistPrimaryGenre": "Trance",
-  "aliases": ["System F", "Moonman", "Pulp Victim"],
-  "chartInfo": "Cult favorite from the System F discography, featured on multiple trance compilations and live sets.",
-  "synths": ["Access Virus B", "Waldorf Q", "Roland JP-8080"],
-  "drums": "Soft kick under lush pads, gradual snare rolls, subtle breakbeat fills",
-  "influences": ["Chicane", "BT", "Paul van Dyk"],
-  "genre": "Trance",
-  "subgenre": "Progressive Trance",
-  "youtube": ["https://www.youtube.com/watch?v=J5uq7XOSnh0"]
-   }
-
+  
 ]
