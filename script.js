@@ -64,7 +64,6 @@ function filterSongsWithOverride(group, overrideValues) {
     const subgenresToCheck = group === 'subgenres' ? overrideValues : selectedFilters.subgenres;
     if (subgenresToCheck.length && !subgenresToCheck.some(sg => (song.subgenre || []).includes(sg))) return false;
 
-    // Year filtering always uses the current selectedFilters (not overridden here)
     if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
     if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
 
@@ -72,7 +71,7 @@ function filterSongsWithOverride(group, overrideValues) {
   });
 }
 
-// Render checkbox filter options with dynamic counts
+// Render checkbox filter options with dynamic counts, hiding incompatible options
 function renderCheckboxFilterWithCounts(containerId, allValues, group) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
@@ -82,13 +81,18 @@ function renderCheckboxFilterWithCounts(containerId, allValues, group) {
     let override;
 
     if (currentlySelected.includes(value)) {
-      override = currentlySelected.filter(v => v !== value); // toggling off
+      // toggling off
+      override = currentlySelected.filter(v => v !== value);
     } else {
-      override = [...currentlySelected, value]; // toggling on
+      // toggling on
+      override = [...currentlySelected, value];
     }
 
     const filteredSongs = filterSongsWithOverride(group, override);
     const count = filteredSongs.length;
+
+    // Hide options that yield zero songs
+    if (count === 0) return;
 
     const label = document.createElement('label');
     label.style.marginRight = '1em';
