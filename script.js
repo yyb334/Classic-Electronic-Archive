@@ -179,7 +179,17 @@ function applyFilters() {
       const text = currentSearchQuery.toLowerCase();
       const inTitle = song.title.toLowerCase().includes(text);
       const inArtist = song.artist.toLowerCase().includes(text);
-      if (!inTitle && !inArtist) return false;
+      let inKeywords = false;
+
+      if (song.keywords) {
+        if (Array.isArray(song.keywords)) {
+          inKeywords = song.keywords.some(k => k.toLowerCase().includes(text));
+        } else if (typeof song.keywords === 'string') {
+          inKeywords = song.keywords.toLowerCase().includes(text);
+        }
+      }
+
+      if (!inTitle && !inArtist && !inKeywords) return false;
     }
 
     return true;
