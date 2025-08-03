@@ -128,3 +128,29 @@ button:hover {
     columns: 1;
   }
 }
+#tag-list button.tag-button {
+  padding: 0.3em 0.6em;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 0.9em;
+  margin: 0 0.3em 0.3em 0;
+}
+
+#tag-list button.tag-button:hover {
+  background-color: #ccc;
+}
+
+#tag-list button.tag-button.active {
+  background-color: #bbb;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #ddd;
+  border-radius: 2px;
+  padding: 0.1em 0.3em;
+  margin-right: 0.3em;
+  font-size: 0.8em;
+}

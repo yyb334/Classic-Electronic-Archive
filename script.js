@@ -3,9 +3,10 @@ let currentDecade = null;
 let currentSearchQuery = '';
 let currentSortBy = 'title';
 let ascending = true;
-let currentTagFilter = null;
+let activeTags = [];
 let currentCountryFilter = '';
 
+// Fetch songs.json data
 async function fetchSongs() {
   const response = await fetch('songs.json');
   if (!response.ok) {
@@ -14,20 +15,58 @@ async function fetchSongs() {
   return await response.json();
 }
 
-function createTagElement(tag) {
-  const span = document.createElement('span');
-  span.className = 'tag';
-  span.textContent = tag;
+// Create a tag button with count and toggle functionality
+function createTagButton(tag, count) {
+  const btn = document.createElement('button');
+  btn.innerHTML = `${tag} <small>(${count})</small>`;
+  btn.style.margin = '0 0.3em 0.3em 0';
+  btn.className = 'tag-button';
 
-  // Clickable tag filter
-  span.addEventListener('click', () => {
-    currentTagFilter = tag;
+  if (activeTags.includes(tag)) {
+    btn.classList.add('active');
+  }
+
+  btn.addEventListener('click', () => {
+    const idx = activeTags.indexOf(tag);
+    if (idx > -1) {
+      activeTags.splice(idx, 1);  // Remove tag
+    } else {
+      activeTags.push(tag);       // Add tag
+    }
     applyFilters();
+    renderTagButtons();           // Refresh tag buttons
   });
 
-  return span;
+  return btn;
 }
 
+// Render all tag buttons with counts
+function renderTagButtons() {
+  const tagContainer = document.getElementById('tag-list');
+  if (!tagContainer) return;
+
+  // Count how many songs have each tag (from all songs)
+  const tagCounts = {};
+
+  allSongs.forEach(song => {
+    if (Array.isArray(song.tags)) {
+      song.tags.forEach(tag => {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+    }
+  });
+
+  tagContainer.innerHTML = '';
+
+  const sortedTags = Object.keys(tagCounts).sort();
+
+  sortedTags.forEach(tag => {
+    const btn = createTagButton(tag, tagCounts[tag]);
+    tagContainer.appendChild(btn);
+  });
+}
+
+// Render individual song list item
 function renderSong(song) {
   const li = document.createElement('li');
 
@@ -37,22 +76,31 @@ function renderSong(song) {
   li.appendChild(link);
 
   const tagContainer = document.createElement('div');
-  song.tags.forEach(tag => tagContainer.appendChild(createTagElement(tag)));
+  if (Array.isArray(song.tags)) {
+    song.tags.forEach(tag => {
+      const span = document.createElement('span');
+      span.className = 'tag';
+      span.textContent = tag;
+      tagContainer.appendChild(span);
+    });
+  }
   li.appendChild(tagContainer);
 
   return li;
 }
 
+// Populate the song list in the DOM
 function loadSongList(songs) {
   const songList = document.getElementById('song-list');
   songList.innerHTML = '';
   songs.forEach(song => songList.appendChild(renderSong(song)));
 }
 
+// Extract decades from tags
 function getDecades(songs) {
   const decades = new Set();
   for (const song of songs) {
-    for (const tag of song.tags) {
+    for (const tag of song.tags || []) {
       const match = tag.match(/^(\d{4})s$/);
       if (match) {
         decades.add(tag);
@@ -62,7 +110,8 @@ function getDecades(songs) {
   return Array.from(decades).sort();
 }
 
-function renderDecadeFilters(decades, songs) {
+// Render decade filter buttons
+function renderDecadeFilters(decades) {
   const filterDiv = document.getElementById('decade-buttons');
   filterDiv.innerHTML = '';
 
@@ -74,7 +123,7 @@ function renderDecadeFilters(decades, songs) {
   });
   filterDiv.appendChild(allButton);
 
-  for (const decade of decades) {
+  decades.forEach(decade => {
     const button = document.createElement('button');
     button.textContent = decade;
     button.addEventListener('click', () => {
@@ -82,13 +131,14 @@ function renderDecadeFilters(decades, songs) {
       applyFilters();
     });
     filterDiv.appendChild(button);
-  }
+  });
 }
 
+// Display tag statistics list (optional)
 function showTagStats(songs) {
   const tagCounts = {};
   for (const song of songs) {
-    for (const tag of song.tags) {
+    for (const tag of song.tags || []) {
       tagCounts[tag] = (tagCounts[tag] || 0) + 1;
     }
   }
@@ -104,6 +154,7 @@ function showTagStats(songs) {
   }
 }
 
+// Setup search bar listener
 function setupSearch() {
   const searchInput = document.getElementById('search-bar');
   searchInput.addEventListener('input', () => {
@@ -112,6 +163,7 @@ function setupSearch() {
   });
 }
 
+// Setup sorting controls
 function setupSorting() {
   const sortSelect = document.getElementById('sort-select');
   const sortButton = document.getElementById('sort-direction');
@@ -133,7 +185,7 @@ function setupSorting() {
   });
 }
 
-// Populate country dropdown
+// Populate country dropdown filter
 function populateCountryFilter(songs) {
   const countries = new Set();
   for (const song of songs) {
@@ -154,6 +206,7 @@ function populateCountryFilter(songs) {
   });
 }
 
+// Setup advanced filters (country & clear tag button)
 function setupAdvancedFilters() {
   const countrySelect = document.getElementById('country-filter');
   if (countrySelect) {
@@ -166,21 +219,23 @@ function setupAdvancedFilters() {
   const clearTagButton = document.getElementById('clear-tag-filter');
   if (clearTagButton) {
     clearTagButton.addEventListener('click', () => {
-      currentTagFilter = null;
+      activeTags = [];
       applyFilters();
+      renderTagButtons();
     });
   }
 }
 
+// Apply all filters and sorting, then display songs
 function applyFilters() {
   let filtered = allSongs;
 
   // Filter by decade
   if (currentDecade) {
-    filtered = filtered.filter(song => song.tags.includes(currentDecade));
+    filtered = filtered.filter(song => (song.tags || []).includes(currentDecade));
   }
 
-  // Filter by search
+  // Filter by search query
   if (currentSearchQuery.trim() !== '') {
     filtered = filtered.filter(song =>
       song.title.toLowerCase().includes(currentSearchQuery) ||
@@ -188,9 +243,12 @@ function applyFilters() {
     );
   }
 
-  // Filter by tag
-  if (currentTagFilter) {
-    filtered = filtered.filter(song => song.tags.includes(currentTagFilter));
+  // Filter by multi-tag selection (AND logic)
+  if (activeTags.length > 0) {
+    filtered = filtered.filter(song => {
+      const songTags = song.tags || [];
+      return activeTags.every(tag => songTags.includes(tag));
+    });
   }
 
   // Filter by country
@@ -198,7 +256,7 @@ function applyFilters() {
     filtered = filtered.filter(song => song.country === currentCountryFilter);
   }
 
-  // Sort
+  // Sorting
   filtered.sort((a, b) => {
     let valA, valB;
 
@@ -221,16 +279,18 @@ function applyFilters() {
   loadSongList(filtered);
 }
 
+// Initialization
 async function init() {
   allSongs = await fetchSongs();
   loadSongList(allSongs);
   const decades = getDecades(allSongs);
-  renderDecadeFilters(decades, allSongs);
+  renderDecadeFilters(decades);
   showTagStats(allSongs);
   populateCountryFilter(allSongs);
   setupSearch();
   setupSorting();
   setupAdvancedFilters();
+  renderTagButtons();
 }
 
 init();
