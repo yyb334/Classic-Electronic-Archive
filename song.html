@@ -2,58 +2,337 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Song Details</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Song Details — Classic Electronic Archive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background-color: #121212;
+      color: #E0E0E0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 1.5rem 1rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+      font-weight: 700;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #FFFFFF;
+      text-shadow: 0 2px 6px rgba(29, 233, 182, 0.4);
+    }
+    h2 {
+      font-size: 1.6rem;
+      color: #B2F2E1;
+      font-style: italic;
+      margin-bottom: 0.25rem;
+    }
+    h3 {
+      font-size: 1.3rem;
+      color: #1DE9B6;
+      border-bottom: 2px solid #1DE9B6;
+      padding-bottom: 0.3rem;
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+
+    /* Header layout */
+    .song-header {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .album-art {
+      width: 160px;
+      height: 160px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(29, 233, 182, 0.4);
+      flex-shrink: 0;
+      background: #222;
+    }
+    .song-main-info {
+      flex: 1;
+      min-width: 220px;
+    }
+    .release-year {
+      color: #1DE9B6;
+      font-weight: 600;
+      margin-top: 0.15rem;
+      margin-bottom: 0.8rem;
+      user-select: none;
+    }
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .tag-pill {
+      background-color: rgba(29, 233, 182, 0.25);
+      color: #1DE9B6;
+      border-radius: 12px;
+      padding: 0.3em 0.9em;
+      font-size: 0.85rem;
+      font-weight: 600;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .tag-pill:hover {
+      background-color: rgba(29, 233, 182, 0.45);
+      cursor: default;
+    }
+
+    /* Sections styling */
+    section {
+      margin-bottom: 2rem;
+    }
+    .song-description p {
+      color: #C8EDE6;
+      font-size: 1rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    dl {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.5rem 1.5rem;
+      color: #B0DDD2;
+      font-size: 1rem;
+    }
+    dt {
+      font-weight: 700;
+      color: #1DE9B6;
+      user-select: none;
+    }
+    dd {
+      margin: 0;
+      overflow-wrap: break-word;
+    }
+
+    /* Buttons */
+    .btn-gradient {
+      display: inline-block;
+      background: linear-gradient(135deg, #FFC107 0%, #FF6F61 100%);
+      color: #121212;
+      font-weight: 700;
+      padding: 0.65em 1.8em;
+      border-radius: 28px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+      transition: filter 0.3s ease;
+      user-select: none;
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+      white-space: nowrap;
+    }
+    .btn-gradient:hover,
+    .btn-gradient:focus {
+      filter: brightness(1.15);
+      outline: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 550px) {
+      .song-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .album-art {
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+        border-radius: 12px;
+        box-shadow: 0 0 16px rgba(29, 233, 182, 0.35);
+      }
+      .song-main-info {
+        min-width: 100%;
+        margin-top: 1rem;
+      }
+      .btn-gradient {
+        width: 100%;
+        text-align: center;
+        margin-right: 0;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1 id="song-title">Loading...</h1>
-  </header>
+  <main class="song-page-container">
+    <header class="song-header">
+      <img src="" alt="Album Art" class="album-art" id="album-art" />
+      <div class="song-main-info">
+        <h1 id="song-title">Loading...</h1>
+        <h2 id="artist-name"></h2>
+        <p class="release-year" id="release-year"></p>
+        <div class="tags-row" id="tag-list"></div>
+      </div>
+    </header>
 
-  <main id="song-details">
-    <a href="index.html" id="back-button">← Back to Song List</a>
-    <!-- Song details will be loaded here -->
+    <section class="song-description">
+      <h3>Description</h3>
+      <p id="description-text">Loading description...</p>
+    </section>
+
+    <section class="song-details">
+      <h3>Details</h3>
+      <dl id="details-list"></dl>
+    </section>
+
+    <section class="song-synths">
+      <h3>Synths Used</h3>
+      <ul id="synths-list" style="color:#B0DDD2; font-size:1rem; margin-top:0; padding-left: 1.2rem;"></ul>
+    </section>
+
+    <section class="song-drums">
+      <h3>Drums / Percussion</h3>
+      <ul id="drums-list" style="color:#B0DDD2; font-size:1rem; margin-top:0; padding-left: 1.2rem;"></ul>
+    </section>
+
+    <section class="song-influences">
+      <h3>Influences</h3>
+      <ul id="influences-list" style="color:#B0DDD2; font-size:1rem; margin-top:0; padding-left: 1.2rem;"></ul>
+    </section>
+
+    <section class="song-links">
+      <h3>Listen / Watch</h3>
+      <div id="links-container"></div>
+    </section>
   </main>
 
   <script>
-    async function loadSongDetails() {
-      const params = new URLSearchParams(window.location.search);
-      const songId = params.get('id');
+    function getUrlParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
 
-      const response = await fetch('songs.json');
-      const songs = await response.json();
-      const song = songs.find(s => s.id === songId);
+    function renderTags(tags, container) {
+      container.innerHTML = '';
+      if (!tags || !tags.length) return;
+      tags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'tag-pill';
+        span.textContent = tag;
+        container.appendChild(span);
+      });
+    }
 
-      if (!song) {
-        document.getElementById('song-title').textContent = "Song Not Found";
+    function renderDetails(song, container) {
+      container.innerHTML = '';
+      const details = {
+        'Country': song.country || 'Unknown',
+        'Genres': song.genre || 'N/A',
+        'Subgenres': song.subgenre || 'N/A',
+        'Label': song.label || 'N/A',
+        'Aliases': (song.aliases && song.aliases.length) ? song.aliases.join(', ') : 'None',
+        'Chart Info': song.chartInfo || 'None',
+        'Album': song.album || 'N/A',
+        'Artist Birthdate': song.artistBorn || 'N/A',
+        'Primary Artist Genre': song.artistPrimaryGenre || 'N/A',
+      };
+
+      for (const [key, value] of Object.entries(details)) {
+        const dt = document.createElement('dt');
+        dt.textContent = key;
+        const dd = document.createElement('dd');
+        dd.textContent = value;
+        container.appendChild(dt);
+        container.appendChild(dd);
+      }
+    }
+
+    function renderList(items, container) {
+      container.innerHTML = '';
+      if (!items || !items.length) {
+        container.textContent = 'N/A';
+        return;
+      }
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        container.appendChild(li);
+      });
+    }
+
+    function renderLinks(song, container) {
+      container.innerHTML = '';
+      if (song.youtube && song.youtube.length) {
+        song.youtube.forEach(url => {
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'btn-gradient';
+          a.textContent = 'YouTube Video';
+          container.appendChild(a);
+        });
+      } else {
+        container.textContent = 'No links available.';
+      }
+    }
+
+    async function loadSongData() {
+      const id = getUrlParam('id');
+      if (!id) {
+        document.body.textContent = 'No song ID specified.';
         return;
       }
 
-      document.getElementById('song-title').textContent = `${song.title} – ${song.artist}`;
+      try {
+        const response = await fetch('songs.json');
+        if (!response.ok) throw new Error('Failed to load songs data');
+        const songs = await response.json();
 
-      const details = document.getElementById('song-details');
-      details.innerHTML = `
-  <a href="index.html" id="back-button">← Back to Song List</a>
-  <p><strong>Description:</strong> ${song.description}</p>
-  <p><strong>Release Year:</strong> ${song.releaseYear}</p>
-  <p><strong>Label:</strong> ${song.label ?? "N/A"}</p>
-  <p><strong>Album:</strong> ${song.album ?? "N/A"}</p>
-  <p><strong>Country:</strong> ${song.country}</p>
-  <p><strong>Artist Born:</strong> ${song.artistBorn}</p>
-  <p><strong>Primary Genre:</strong> ${song.artistPrimaryGenre}</p>
-  <p><strong>Aliases:</strong> ${song.aliases.join(", ")}</p>
-  <p><strong>Chart Info:</strong> ${song.chartInfo}</p>
-  <p><strong>Synths Used:</strong> ${song.synths.join(", ")}</p>
-  <p><strong>Drums/Rhythms:</strong> ${song.drums}</p>
-  <p><strong>Influences:</strong> ${song.influences.join(", ")}</p>
-  <p><strong>Genre:</strong> ${song.genre}</p>
-  <p><strong>Subgenre:</strong> ${song.subgenre}</p>
-  <p><strong>YouTube:</strong> <a href="${song.youtube}" target="_blank">Listen on YouTube</a></p>
-`;
+        const song = songs.find(s => s.id === id);
+        if (!song) {
+          document.body.textContent = 'Song not found.';
+          return;
+        }
+
+        // Populate header info
+        document.getElementById('song-title').textContent = song.title || 'Unknown Title';
+        document.getElementById('artist-name').textContent = song.artist || 'Unknown Artist';
+        document.getElementById('release-year').textContent = song.releaseYear ? `Released: ${song.releaseYear}` : '';
+        document.getElementById('album-art').src = song.albumArt || 'default-album.png';
+        document.getElementById('album-art').alt = `${song.title} Album Art`;
+
+        // Tags
+        renderTags(song.tags, document.getElementById('tag-list'));
+
+        // Description
+        document.getElementById('description-text').textContent = song.description || 'No description available.';
+
+        // Details
+        renderDetails(song, document.getElementById('details-list'));
+
+        // Synths, drums, influences lists
+        renderList(song.synths, document.getElementById('synths-list'));
+        renderList(song.drums, document.getElementById('drums-list'));
+        renderList(song.influences, document.getElementById('influences-list'));
+
+        // Listen/watch links
+        renderLinks(song, document.getElementById('links-container'));
+
+      } catch (err) {
+        document.body.textContent = 'Error loading song data: ' + err.message;
+      }
     }
 
-    loadSongDetails();
+    loadSongData();
   </script>
 </body>
 </html>
