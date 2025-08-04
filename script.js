@@ -113,7 +113,15 @@ function renderCheckboxFilterWithCounts(containerId, allValues, group) {
     });
 
     label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(` ${value} (${count})`));
+
+    // Append tag name text
+    label.appendChild(document.createTextNode(' ' + value + ' '));
+
+    // Append count inside a <small> tag
+    const small = document.createElement('small');
+    small.textContent = `(${count})`;
+    label.appendChild(small);
+
     container.appendChild(label);
   });
 }

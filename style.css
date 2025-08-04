@@ -1,7 +1,5 @@
-/* Import a modern, professional font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
-/* Reset and base */
 * {
   box-sizing: border-box;
 }
@@ -27,7 +25,6 @@ header h1 {
   text-shadow: 0 2px 6px rgba(29, 233, 182, 0.4);
 }
 
-/* Search and sort container */
 #search-sort {
   display: flex;
   flex-wrap: wrap;
@@ -58,7 +55,6 @@ header h1 {
   box-shadow: inset 0 0 8px rgba(29, 233, 182, 0.7);
 }
 
-/* Sort dropdown */
 #sort-select {
   padding: 0.6em 1em;
   border-radius: 10px;
@@ -77,7 +73,6 @@ header h1 {
   box-shadow: inset 0 0 8px rgba(29, 233, 182, 0.7);
 }
 
-/* Sort direction button */
 #sort-direction {
   background: linear-gradient(135deg, #FFC107 0%, #FF6F61 100%);
   border: none;
@@ -96,7 +91,6 @@ header h1 {
   filter: brightness(1.1);
 }
 
-/* Filters container */
 #filters {
   display: flex;
   flex-wrap: wrap;
@@ -108,7 +102,6 @@ header h1 {
   box-shadow: 0 0 20px rgba(29, 233, 182, 0.15);
 }
 
-/* Each filter group */
 #filters > div {
   flex: 1 1 160px;
   min-width: 140px;
@@ -120,7 +113,6 @@ header h1 {
   box-shadow: 0 0 8px rgba(29, 233, 182, 0.15);
 }
 
-/* Sticky headings */
 #filters h3 {
   margin: 0 0 0.6rem 0;
   font-size: 1.1rem;
@@ -135,7 +127,6 @@ header h1 {
   user-select: none;
 }
 
-/* Checkbox labels */
 label {
   display: block;
   margin-bottom: 0.3rem;
@@ -144,13 +135,13 @@ label {
   cursor: pointer;
   transition: color 0.2s ease;
   user-select: none;
+  white-space: nowrap;
 }
 
 label:hover {
   color: #1DE9B6;
 }
 
-/* Checkbox styling */
 label input[type="checkbox"] {
   margin-right: 0.55em;
   cursor: pointer;
@@ -159,7 +150,14 @@ label input[type="checkbox"] {
   accent-color: #1DE9B6;
 }
 
-/* Year inputs */
+label small {
+  margin-left: 0.3em;
+  color: #888888;
+  font-weight: 600;
+  font-size: 0.85em;
+  display: inline;
+}
+
 #year-filter-section input {
   width: 75px;
   padding: 0.35em 0.5em;
@@ -183,7 +181,6 @@ label input[type="checkbox"] {
   box-shadow: inset 0 0 8px rgba(29, 233, 182, 0.7);
 }
 
-/* Clear Filters button */
 #clear-filters {
   display: block;
   margin: 0 auto 3rem auto;
@@ -206,7 +203,6 @@ label input[type="checkbox"] {
   filter: brightness(1.15);
 }
 
-/* Song list styling */
 #song-list {
   list-style: none;
   padding-left: 0;
@@ -238,7 +234,6 @@ label input[type="checkbox"] {
   text-decoration: underline;
 }
 
-/* Tag container inside song list item */
 .tag-container {
   margin-top: 0.35em;
 }
@@ -259,7 +254,6 @@ label input[type="checkbox"] {
   background-color: rgba(29, 233, 182, 0.4);
 }
 
-/* Scrollbar styling for filter groups (modern browsers) */
 #filters > div::-webkit-scrollbar {
   width: 8px;
 }
@@ -273,7 +267,6 @@ label input[type="checkbox"] {
   background-color: rgba(29, 233, 182, 0.5);
 }
 
-/* Responsive adjustments */
 @media (max-width: 750px) {
   header h1 {
     font-size: 2rem;
