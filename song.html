@@ -180,6 +180,7 @@
         <h2 id="artist-name"></h2>
         <p class="release-year" id="release-year"></p>
         <div class="tags-row" id="tag-list"></div>
+        <div class="tags-row" id="mood-tags"></div>
       </div>
     </header>
 
@@ -282,6 +283,28 @@
       return TAG_NORMALIZATION[lower] || tag;
     }
 
+    const MOOD_KEYWORDS = {
+      energetic: ['energetic', 'high-energy', 'upbeat', 'driving', 'fast', 'lively'],
+      dark: ['dark', 'moody', 'brooding', 'ominous'],
+      uplifting: ['uplifting', 'euphoric', 'happy', 'joyful', 'positive'],
+      melancholic: ['melancholic', 'melancholy', 'sad', 'nostalgic'],
+      dreamy: ['dreamy', 'ambient', 'ethereal', 'soothing', 'chill'],
+      aggressive: ['aggressive', 'hard', 'intense', 'gritty']
+    };
+
+    function deriveMoods(song) {
+      const text = (
+        (song.description || '') + ' ' +
+        (Array.isArray(song.tags) ? song.tags.join(' ') : '') + ' ' +
+        (song.subgenre || '')
+      ).toLowerCase();
+      const moods = new Set();
+      for (const [mood, keywords] of Object.entries(MOOD_KEYWORDS)) {
+        if (keywords.some(kw => text.includes(kw))) moods.add(mood);
+      }
+      return Array.from(moods);
+    }
+
     function renderTags(tags, container) {
       container.innerHTML = '';
       if (!Array.isArray(tags) || tags.length === 0) return;
@@ -373,6 +396,8 @@
         document.getElementById('album-art').alt = `${song.title} Album Art`;
 
         renderTags(song.tags, document.getElementById('tag-list'));
+        const moods = deriveMoods(song);
+        renderTags(moods, document.getElementById('mood-tags'));
 
         document.getElementById('description-text').textContent = song.description || 'No description available.';
 

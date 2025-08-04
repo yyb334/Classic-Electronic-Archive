@@ -6,6 +6,7 @@ const selectedFilters = {
   labels: [],
   genres: [],
   subgenres: [],
+  moods: [],
   yearMin: null,
   yearMax: null,
 };
@@ -74,6 +75,30 @@ function normalizeTag(tag) {
     .replace(/[^a-z0-9 ]/g, '')
     .trim();
   return TAG_NORMALIZATION[lower] || tag;
+}
+
+// Basic mood detection keywords grouped into broader categories.
+// This lightweight heuristic scans descriptions and tags to infer moods.
+const MOOD_KEYWORDS = {
+  energetic: ['energetic', 'high-energy', 'upbeat', 'driving', 'fast', 'lively'],
+  dark: ['dark', 'moody', 'brooding', 'ominous'],
+  uplifting: ['uplifting', 'euphoric', 'happy', 'joyful', 'positive'],
+  melancholic: ['melancholic', 'melancholy', 'sad', 'nostalgic'],
+  dreamy: ['dreamy', 'ambient', 'ethereal', 'soothing', 'chill'],
+  aggressive: ['aggressive', 'hard', 'intense', 'gritty']
+};
+
+function deriveMoods(song) {
+  const text = (
+    (song.description || '') + ' ' +
+    (Array.isArray(song.tags) ? song.tags.join(' ') : '') + ' ' +
+    (song.subgenre || '')
+  ).toLowerCase();
+  const moods = new Set();
+  for (const [mood, keywords] of Object.entries(MOOD_KEYWORDS)) {
+    if (keywords.some(kw => text.includes(kw))) moods.add(mood);
+  }
+  return Array.from(moods);
 }
 
 // Reduce tag noise for the filter view by grouping similar tags
@@ -200,6 +225,9 @@ function filterSongsWithOverride(group, overrideValues) {
     const subgenresToCheck = group === 'subgenres' ? overrideValues : selectedFilters.subgenres;
     if (subgenresToCheck.length && !subgenresToCheck.some(sg => (song.subgenre || []).includes(sg))) return false;
 
+    const moodsToCheck = group === 'moods' ? overrideValues : selectedFilters.moods;
+    if (moodsToCheck.length && !moodsToCheck.some(m => (song.moods || []).includes(m))) return false;
+
     if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
     if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
 
@@ -270,6 +298,7 @@ function renderAllFilters() {
   renderCheckboxFilterWithCounts('label-list', getUniqueValues('label'), 'labels');
   renderCheckboxFilterWithCounts('genre-list', getUniqueValues('genre'), 'genres');
   renderCheckboxFilterWithCounts('subgenre-list', getUniqueValues('subgenre'), 'subgenres');
+  renderCheckboxFilterWithCounts('mood-list', getUniqueValues('moods'), 'moods');
 }
 
 // Render a single song item
@@ -288,6 +317,14 @@ function renderSong(song) {
       const span = document.createElement('span');
       span.className = 'tag';
       span.textContent = tag;
+      tagContainer.appendChild(span);
+    });
+  }
+  if (Array.isArray(song.moods)) {
+    song.moods.forEach(mood => {
+      const span = document.createElement('span');
+      span.className = 'tag';
+      span.textContent = mood;
       tagContainer.appendChild(span);
     });
   }
@@ -324,6 +361,7 @@ function applyFilters() {
     }
     if (selectedFilters.genres.length && !selectedFilters.genres.some(g => (song.genre || []).includes(g))) return false;
     if (selectedFilters.subgenres.length && !selectedFilters.subgenres.some(sg => (song.subgenre || []).includes(sg))) return false;
+    if (selectedFilters.moods.length && !selectedFilters.moods.some(m => (song.moods || []).includes(m))) return false;
     if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
     if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
 
@@ -480,6 +518,9 @@ async function init() {
         .filter(Boolean);
       song.country = [...new Set(song.country)];
     }
+
+    // Derive moods from description, tags and subgenre
+    song.moods = deriveMoods(song);
   });
 
   renderAllFilters();
