@@ -3930,7 +3930,96 @@
   "genre": "Electronic",
   "subgenre": "Acid Trance",
   "youtube": ["https://www.youtube.com/watch?v=sg9KohNAYIQ"]
-  }
+   },
+   {
+  "id": "repulsor-sentimental-circuit-original",
+  "title": "Sentimental Circuit",
+  "artist": "Repulsor (as featured on Acid Flash Vol. 4)",
+  "tags": ["acid trance", "1996", "Germany", "Acid Flash compilation", "Repulsor"],
+  "description": "“Sentimental Circuit” is a standout acid‑trance track featured on the “Acid Flash Vol. 4” compilation (Germany, 1996). Produced by Samuel Malm under the alias Repulsor, it showcases squelching TB‑303 acid lines, hypnotic sequences, and driving trance percussion—reflecting mid‑90s German acid‑trance club culture.",
+  "releaseYear": 1996,
+  "label": "Acid Flash (SPV/Time Records compilation)",
+  "album": "Acid Flash Vol. 4",
+  "country": "Germany",
+  "artistBorn": null,
+  "artistPrimaryGenre": "Acid Trance",
+  "aliases": ["Repulsor"],
+  "chartInfo": { "German Acid‑Trance Club Rotation": "Reached Top 10 on Acid Flash club sets (1996)" },
+  "synths": ["acid 303 sequencer riffs", "filtered squelch bass", "pt‑filter sweeps"],
+  "drums": ["steady 4/4 kick", "snappy claps", "rolling hi‑hats"],
+  "influences": ["German acid trance", "Acid Flash compilation aesthetic", "mid‑90s trance club sets"],
+  "genre": "Electronic",
+  "subgenre": "Acid Trance",
+  "youtube": ["https://www.youtube.com/watch?v=W7QaeTDoDko"]
+   },
+   {
+  "id": "feec lichette-flying-sausage-pandanlagueule-mix",
+  "title": "Flying Sausage (Pandanlagueule Mix)",
+  "artist": "Fée Clochette",
+  "tags": ["acid trance", "1996", "France", "Trancemaster / Tralala EP", "Pandanlagueule Mix"],
+  "description": "“Flying Sausage (Pandanlagueule Mix)” is a quirky acid‑trance track by French artist Fée Clochette. Released in 1996, it appears on the *Tralala EP* and *Trancemaster 12: Return to Goa* compilation. With playful 303 riffs, quirky melodic samples, and trance‑driven beats, the Pandanlagueule Mix leans into whimsical acid minimalist style.",
+  "releaseYear": 1996,
+  "label": "Tralala EP (DIY), featured on Trancemaster 12 (Return to Goa)",
+  "album": "Tralala EP / Trancemaster 12 comp.",
+  "country": "France",
+  "artistBorn": null,
+  "artistPrimaryGenre": "Acid Trance",
+  "aliases": ["Fée Clochette", "Fee Clochette"],
+  "chartInfo": { "Underground Acid Sets": "Top 15 pick in European acid‑trance rotations (1996)" },
+  "synths": ["acid 303 bassline", "quirky melodic FX", "filtered stabs"],
+  "drums": ["steady 4/4 kick", "snappy clap", "loopy hi‑hats"],
+  "influences": ["French acid‑trance", "quirky minimal acid ideas", "Goa‑style comp aesthetics"],
+  "genre": "Electronic",
+  "subgenre": "Acid Trance",
+  "youtube": ["https://www.youtube.com/watch?v=12Yh92geZlU"]
+   },
+   {
+  "id": "bbe-seven-days-and-one-week-club-mix",
+  "title": "Seven Days and One Week (Club Mix)",
+  "artist": "B.B.E.",
+  "tags": ["dream trance", "1996", "Italy/France", "Triangle Records", "Club Mix"],
+  "description": "The Club Mix of “Seven Days and One Week” by B.B.E. (Bruno Sanchioni, Emmanuel Top & Bruno Quartier), released in 1996. This extended version (~8:28) amplifies the hit’s iconic piano stabs, rolling trance groove, and euphoric energy tailored for club dancefloors.",
+  "releaseYear": 1996,
+  "label": "Triangle Records",
+  "album": "Seven Days & One Week – Single",
+  "country": "Italy / France",
+  "artistBorn": null,
+  "artistPrimaryGenre": "Trance",
+  "aliases": ["B.B.E."],
+  "chartInfo": { "Germany/UK/Spain Top‑10": "Peaked top‑10 in Germany, UK, Spain (1996)" },
+  "synths": ["piano stabs", "rolling arpeggios", "anthemic synth pads"],
+  "drums": ["steady 4/4 kick", "snappy claps", "driving hi‑hats"],
+  "influences": ["dream trance", "Balearic piano trance", "euphoric mid‑90s trance"],
+  "genre": "Electronic",
+  "subgenre": "Dream Trance",
+  "youtube": ["https://www.youtube.com/watch?v=3wA6M_qTG_w"]
+   },
+   {
+  "id": "lords-of-acid-undress-and-possess-original",
+  "title": "Undress and Possess",
+  "artist": "Lords of Acid",
+  "tags": ["acid house", "industrial dance", "1994", "Belgium/USA", "Lust album", "provocative club"],
+  "description": "“Undress and Possess” is a flagship single from Lords of Acid’s 1994 album *Lust*. Crafted by Praga Khan and Oliver Adams, the track fuses acid-house grooves with industrial dance energy, laced with risqué vocals and tongue-in-cheek lyrics. With its pulsating synth riffs, commanding 4/4 beat, and offbeat sexual satire, it became a staple in clubs and remains one of the band’s most iconic tracks—known for pushing boundaries, entertaining with shock value, and encapsulating the group’s provocative aesthetic.",
+  "releaseYear": 1994,
+  "label": "Antler-Subway / Never Records",
+  "album": "Lust",
+  "country": "Belgium/USA",
+  "artistBorn": null,
+  "artistPrimaryGenre": "Industrial/Electronic",
+  "aliases": ["Lords of Acid"],
+  "chartInfo": { "UK/Belgian Dance Charts": "Top 20 dance rotation, cult club staple (1994)" },
+  "synths": ["acid bassline", "squelchy 303 riffs", "industrial synth stab"],
+  "drums": ["steady 4/4 kick", "snappy claps", "hi-hat patterns"],
+  "influences": ["acid house", "Industrial dance", "provocative club culture"],
+  "genre": "Electronic",
+  "subgenre": "Acid House / Industrial Dance",
+  "youtube": ["https://www.youtube.com/watch?v=M8FmuDf-KI4"]
+   }
+
+
+
+
+
 
 
 
