@@ -457,8 +457,18 @@ async function init() {
     if (song.label) {
       if (typeof song.label === 'string') song.label = parseLabels(song.label);
       else if (!Array.isArray(song.label)) song.label = [];
+
+      // Build a set of lowercase label names for quick checks
       const labelSet = new Set(song.label.map(l => l.toLowerCase()));
-      song.filterTags = song.filterTags.filter(t => !labelSet.has(t.toLowerCase()));
+
+      // Remove any tag that matches or contains a label name so labels only
+      // appear in the dedicated Record Label filter.
+      song.filterTags = song.filterTags.filter(tag => {
+        const lower = tag.toLowerCase();
+        return !Array.from(labelSet).some(label =>
+          lower === label || lower.includes(label)
+        );
+      });
     } else {
       song.label = [];
     }
