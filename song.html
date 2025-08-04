@@ -222,7 +222,7 @@
 
     function renderTags(tags, container) {
       container.innerHTML = '';
-      if (!tags || !tags.length) return;
+      if (!Array.isArray(tags) || tags.length === 0) return;
       tags.forEach(tag => {
         const span = document.createElement('span');
         span.className = 'tag-pill';
@@ -238,7 +238,7 @@
         'Genres': song.genre || 'N/A',
         'Subgenres': song.subgenre || 'N/A',
         'Label': song.label || 'N/A',
-        'Aliases': (song.aliases && song.aliases.length) ? song.aliases.join(', ') : 'None',
+        'Aliases': (Array.isArray(song.aliases) && song.aliases.length) ? song.aliases.join(', ') : 'None',
         'Chart Info': song.chartInfo || 'None',
         'Album': song.album || 'N/A',
         'Artist Birthdate': song.artistBorn || 'N/A',
@@ -257,7 +257,7 @@
 
     function renderList(items, container) {
       container.innerHTML = '';
-      if (!items || !items.length) {
+      if (!Array.isArray(items) || items.length === 0) {
         container.textContent = 'N/A';
         return;
       }
@@ -270,7 +270,7 @@
 
     function renderLinks(song, container) {
       container.innerHTML = '';
-      if (song.youtube && song.youtube.length) {
+      if (Array.isArray(song.youtube) && song.youtube.length) {
         song.youtube.forEach(url => {
           const a = document.createElement('a');
           a.href = url;
@@ -303,28 +303,22 @@
           return;
         }
 
-        // Populate header info
         document.getElementById('song-title').textContent = song.title || 'Unknown Title';
         document.getElementById('artist-name').textContent = song.artist || 'Unknown Artist';
         document.getElementById('release-year').textContent = song.releaseYear ? `Released: ${song.releaseYear}` : '';
         document.getElementById('album-art').src = song.albumArt || 'default-album.png';
         document.getElementById('album-art').alt = `${song.title} Album Art`;
 
-        // Tags
         renderTags(song.tags, document.getElementById('tag-list'));
 
-        // Description
         document.getElementById('description-text').textContent = song.description || 'No description available.';
 
-        // Details
         renderDetails(song, document.getElementById('details-list'));
 
-        // Synths, drums, influences lists
         renderList(song.synths, document.getElementById('synths-list'));
         renderList(song.drums, document.getElementById('drums-list'));
         renderList(song.influences, document.getElementById('influences-list'));
 
-        // Listen/watch links
         renderLinks(song, document.getElementById('links-container'));
 
       } catch (err) {
