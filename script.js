@@ -75,6 +75,46 @@ function normalizeTag(tag) {
   return TAG_NORMALIZATION[lower] || tag;
 }
 
+// Reduce tag noise for the filter view by grouping similar tags
+// without altering how tags appear on individual song pages.
+// Returns an array so a tag like "acid trance" contributes to
+// both "acid" and "trance" buckets.
+const FILTER_TAG_PATTERNS = [
+  { canonical: 'acid', pattern: /acid/ },
+  { canonical: 'trance', pattern: /trance/ },
+  { canonical: 'house', pattern: /house/ },
+  { canonical: 'techno', pattern: /techno/ },
+  { canonical: 'hardcore', pattern: /hardcore/ },
+  { canonical: 'breakbeat', pattern: /breakbeat|breakstep/ },
+  { canonical: 'garage', pattern: /garage/ },
+  { canonical: 'ambient', pattern: /ambient/ },
+  { canonical: 'electro', pattern: /\belectro\b/ }
+];
+
+function consolidateTagForFilter(tag) {
+  const norm = normalizeTag(tag);
+  const lower = norm.toLowerCase();
+
+  // Skip mix/version descriptors in the filter list
+  if (/\b(mix|remix|edit|version|dub|cut)\b/.test(lower)) return [];
+
+  // Collapse any explicit years or year ranges into decades
+  const yearMatch = lower.match(/(19|20)\d{2}/);
+  if (yearMatch) {
+    const year = parseInt(yearMatch[0], 10);
+    return [`${Math.floor(year / 10) * 10}s`];
+  }
+
+  const results = [];
+  FILTER_TAG_PATTERNS.forEach(({ canonical, pattern }) => {
+    if (pattern.test(lower)) results.push(canonical);
+  });
+
+  // Fall back to the normalized tag if no pattern matched
+  if (results.length === 0) results.push(norm);
+  return Array.from(new Set(results));
+}
+
 // Map of country variations to their canonical forms
 const COUNTRY_NORMALIZATION = {
   uk: 'United Kingdom',
@@ -96,16 +136,12 @@ async function fetchSongs() {
   return await response.json();
 }
 
-// Get unique normalized tags excluding pure 4-digit year tags
+// Get unique consolidated tags for the filter view
 function getUniqueTags() {
   const allTags = new Set();
 
   allSongs.forEach(song => {
-    (song.normalizedTags || []).forEach(tag => {
-      if (!/^\d{4}$/.test(tag)) { // exclude pure year tags
-        allTags.add(tag);
-      }
-    });
+    (song.filterTags || []).forEach(tag => allTags.add(tag));
   });
 
   return Array.from(allTags).sort();
@@ -127,7 +163,7 @@ function getUniqueValues(field) {
 function filterSongsWithOverride(group, overrideValues) {
   return allSongs.filter(song => {
     const tagsToCheck = group === 'tags' ? overrideValues : selectedFilters.tags;
-    if (tagsToCheck.length && !tagsToCheck.some(t => (song.normalizedTags || []).includes(t))) return false;
+    if (tagsToCheck.length && !tagsToCheck.some(t => (song.filterTags || []).includes(t))) return false;
 
     const countriesToCheck = group === 'countries' ? overrideValues : selectedFilters.countries;
     if (countriesToCheck.length) {
@@ -255,7 +291,7 @@ function loadSongList(songs) {
 // Apply all filters and sorting, then update list
 function applyFilters() {
   let filtered = allSongs.filter(song => {
-    if (selectedFilters.tags.length && !selectedFilters.tags.some(t => (song.normalizedTags || []).includes(t))) return false;
+    if (selectedFilters.tags.length && !selectedFilters.tags.some(t => (song.filterTags || []).includes(t))) return false;
     if (selectedFilters.countries.length) {
       const songCountries = Array.isArray(song.country) ? song.country : [song.country];
       if (!selectedFilters.countries.some(c => songCountries.includes(c))) return false;
@@ -386,6 +422,11 @@ async function init() {
     } else {
       song.normalizedTags = [];
     }
+
+    // Build tag set used solely for filtering
+    song.filterTags = Array.from(
+      new Set(song.normalizedTags.flatMap(consolidateTagForFilter))
+    );
 
     if (typeof song.country === 'string') {
       song.country = song.country
