@@ -3,6 +3,7 @@ const selectedFilters = {
   tags: [],
   countries: [],
   artists: [],
+  labels: [],
   genres: [],
   subgenres: [],
   yearMin: null,
@@ -129,6 +130,19 @@ function normalizeCountry(country) {
   return COUNTRY_NORMALIZATION[key] || country;
 }
 
+// Split a label string into individual clean label names
+function parseLabels(labelStr) {
+  return labelStr
+    .split(/[\/,]/)
+    .map(l =>
+      l
+        .replace(/\(.*?\)/g, '')
+        .replace(/licensed to/gi, '')
+        .trim()
+    )
+    .filter(Boolean);
+}
+
 // Fetch songs.json data
 async function fetchSongs() {
   const response = await fetch('songs.json');
@@ -173,6 +187,12 @@ function filterSongsWithOverride(group, overrideValues) {
 
     const artistsToCheck = group === 'artists' ? overrideValues : selectedFilters.artists;
     if (artistsToCheck.length && !artistsToCheck.includes(song.artist)) return false;
+
+    const labelsToCheck = group === 'labels' ? overrideValues : selectedFilters.labels;
+    if (labelsToCheck.length) {
+      const songLabels = Array.isArray(song.label) ? song.label : [song.label];
+      if (!labelsToCheck.some(l => songLabels.includes(l))) return false;
+    }
 
     const genresToCheck = group === 'genres' ? overrideValues : selectedFilters.genres;
     if (genresToCheck.length && !genresToCheck.some(g => (song.genre || []).includes(g))) return false;
@@ -247,6 +267,7 @@ function renderAllFilters() {
   renderCheckboxFilterWithCounts('tag-list', getUniqueTags(), 'tags');
   renderCheckboxFilterWithCounts('country-list', getUniqueValues('country'), 'countries');
   renderCheckboxFilterWithCounts('artist-list', getUniqueValues('artist'), 'artists');
+  renderCheckboxFilterWithCounts('label-list', getUniqueValues('label'), 'labels');
   renderCheckboxFilterWithCounts('genre-list', getUniqueValues('genre'), 'genres');
   renderCheckboxFilterWithCounts('subgenre-list', getUniqueValues('subgenre'), 'subgenres');
 }
@@ -297,6 +318,10 @@ function applyFilters() {
       if (!selectedFilters.countries.some(c => songCountries.includes(c))) return false;
     }
     if (selectedFilters.artists.length && !selectedFilters.artists.includes(song.artist)) return false;
+    if (selectedFilters.labels.length) {
+      const songLabels = Array.isArray(song.label) ? song.label : [song.label];
+      if (!selectedFilters.labels.some(l => songLabels.includes(l))) return false;
+    }
     if (selectedFilters.genres.length && !selectedFilters.genres.some(g => (song.genre || []).includes(g))) return false;
     if (selectedFilters.subgenres.length && !selectedFilters.subgenres.some(sg => (song.subgenre || []).includes(sg))) return false;
     if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
@@ -427,6 +452,16 @@ async function init() {
     song.filterTags = Array.from(
       new Set(song.normalizedTags.flatMap(consolidateTagForFilter))
     );
+
+    // Parse record labels and remove them from filter tags
+    if (song.label) {
+      if (typeof song.label === 'string') song.label = parseLabels(song.label);
+      else if (!Array.isArray(song.label)) song.label = [];
+      const labelSet = new Set(song.label.map(l => l.toLowerCase()));
+      song.filterTags = song.filterTags.filter(t => !labelSet.has(t.toLowerCase()));
+    } else {
+      song.label = [];
+    }
 
     if (typeof song.country === 'string') {
       song.country = song.country
