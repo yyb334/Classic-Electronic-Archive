@@ -220,10 +220,73 @@
       return urlParams.get(param);
     }
 
+    // Map of tag variations to canonical names
+    const TAG_NORMALIZATION = {
+      // United Kingdom
+      'uk': 'UK',
+      'united kingdom': 'UK',
+      'great britain': 'UK',
+      'britain': 'UK',
+      'england': 'UK',
+      'scotland': 'UK',
+      'wales': 'UK',
+      'northern ireland': 'UK',
+
+      // United States
+      'usa': 'USA',
+      'us': 'USA',
+      'u s a': 'USA',
+      'u s': 'USA',
+      'united states': 'USA',
+      'united states of america': 'USA',
+      'america': 'USA',
+      'american': 'USA',
+
+      // Germany
+      'germany': 'Germany',
+      'german': 'Germany',
+      'deutschland': 'Germany',
+
+      // Netherlands
+      'netherlands': 'Netherlands',
+      'holland': 'Netherlands',
+      'dutch': 'Netherlands',
+
+      // Belgium
+      'belgium': 'Belgium',
+      'belgian': 'Belgium',
+
+      // France
+      'france': 'France',
+      'french': 'France',
+
+      // Spain
+      'spain': 'Spain',
+      'spanish': 'Spain',
+
+      // Italy
+      'italy': 'Italy',
+      'italian': 'Italy',
+
+      // Russia
+      'russia': 'Russia',
+      'russian': 'Russia'
+    };
+
+    function normalizeTag(tag) {
+      const lower = (tag || '')
+        .toLowerCase()
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9 ]/g, '')
+        .trim();
+      return TAG_NORMALIZATION[lower] || tag;
+    }
+
     function renderTags(tags, container) {
       container.innerHTML = '';
       if (!Array.isArray(tags) || tags.length === 0) return;
-      tags.forEach(tag => {
+      const normalized = Array.from(new Set(tags.map(normalizeTag)));
+      normalized.forEach(tag => {
         const span = document.createElement('span');
         span.className = 'tag-pill';
         span.textContent = tag;
