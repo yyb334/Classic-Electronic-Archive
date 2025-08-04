@@ -2,83 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Classic Electronic Archive - Advanced Multi-Filters</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Song Archive</title>
   <style>
-    /* Keep any critical inline styles here if needed */
+    .tag-button {
+      margin: 3px;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background-color: #eee;
+    }
+    .tag-button.active {
+      background-color: #ccc;
+    }
+    #song-list li {
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Classic Electronic Archive</h1>
-  </header>
 
-  <main>
-    <!-- Search and Sort Controls -->
-    <section id="search-sort">
-      <input type="text" id="search-bar" placeholder="Search by title or artist..." aria-label="Search songs by title or artist" />
-      <label for="sort-select"><strong>Sort by:</strong></label>
-      <select id="sort-select" aria-label="Sort songs">
-        <option value="title">Title</option>
-        <option value="artist">Artist</option>
-        <option value="year">Release Year</option>
-      </select>
-      <button id="sort-direction" aria-label="Toggle sort direction">↑ Ascending</button>
-    </section>
+  <div id="tag-container"></div>
+  <ul id="song-list"></ul>
 
-    <!-- Advanced Filters -->
-    <section id="filters" aria-label="Advanced filter options">
-      <div id="tag-filter">
-        <h3>Tags</h3>
-        <div id="tag-list" role="group" aria-label="Filter by tags"></div>
-      </div>
+  <script>
+    async function fetchSongs() {
+      const response = await fetch('songs.json');
+      if (!response.ok) {
+        throw new Error('Failed to load songs.json');
+      }
+      const songs = await response.json();
+      return songs;
+    }
 
-      <div id="country-filter-section">
-        <h3>Country</h3>
-        <div id="country-list" role="group" aria-label="Filter by country"></div>
-      </div>
+    function createTagButton(tag, onClick) {
+      const btn = document.createElement('button');
+      btn.className = 'tag-button';
+      btn.textContent = tag;
+      btn.addEventListener('click', () => onClick(tag, btn));
+      return btn;
+    }
 
-      <div id="artist-filter-section">
-        <h3>Artist</h3>
-        <div id="artist-list" role="group" aria-label="Filter by artist"></div>
-      </div>
+    async function loadTagsAndSongs() {
+      const songs = await fetchSongs();
 
-      <div id="genre-filter-section">
-        <h3>Genre</h3>
-        <div id="genre-list" role="group" aria-label="Filter by genre"></div>
-      </div>
+      // Collect all tags
+      let allTags = [];
+      songs.forEach(song => {
+        allTags = allTags.concat(song.tags);
+      });
 
-      <div id="subgenre-filter-section">
-        <h3>Subgenre</h3>
-        <div id="subgenre-list" role="group" aria-label="Filter by subgenre"></div>
-      </div>
+      // Unique tags
+      const uniqueTags = [...new Set(allTags)];
 
-      <div id="year-filter-section">
-        <h3>Year</h3>
-        <input type="number" id="year-min" placeholder="From year" min="1900" max="2100" aria-label="Minimum year" />
-        <input type="number" id="year-max" placeholder="To year" min="1900" max="2100" aria-label="Maximum year" />
-      </div>
-    </section>
+      // Filter out individual year-range tags like "1999-2000" or "1997-1998"
+      // Pattern: 4 digits, dash, 4 digits, e.g., '1999-2000'
+      const filteredTags = uniqueTags.filter(tag => {
+        return !/^\d{4}-\d{4}$/.test(tag);
+      });
 
-    <!-- Clear Filters Button -->
-    <section>
-      <button id="clear-filters" aria-label="Clear all filters">Clear All Filters</button>
-    </section>
+      const tagContainer = document.getElementById('tag-container');
+      tagContainer.innerHTML = '';
 
-    <!-- Song List -->
-    <section id="songs" aria-live="polite" aria-relevant="additions">
-      <h2>Song List</h2>
-      <ul id="song-list"></ul>
-    </section>
+      let activeTag = null;
 
-    <!-- Tag Stats (optional) -->
-    <section id="tag-stats" style="margin-top: 2rem;">
-      <h2>Tag Statistics</h2>
-      <ul id="tag-counts"></ul>
-    </section>
-  </main>
+      function renderSongs(filteredSongs) {
+        const songList = document.getElementById('song-list');
+        songList.innerHTML = '';
+        filteredSongs.forEach(song => {
+          const li = document.createElement('li');
+          li.textContent = `${song.title} – ${song.artist}`;
+          songList.appendChild(li);
+        });
+      }
 
-  <script src="script.js"></script>
+      function onTagClick(tag, btn) {
+        // Toggle active tag
+        if (activeTag === tag) {
+          activeTag = null;
+          btn.classList.remove('active');
+          renderSongs(songs); // Show all songs
+        } else {
+          activeTag = tag;
+          // Remove active from all buttons
+          [...tagContainer.children].forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          // Filter songs by tag
+          const filteredSongs = songs.filter(song => song.tags.includes(tag));
+          renderSongs(filteredSongs);
+        }
+      }
+
+      // Create buttons for all filtered tags
+      filteredTags.forEach(tag => {
+        const btn = createTagButton(tag, onTagClick);
+        tagContainer.appendChild(btn);
+      });
+
+      // Show all songs by default
+      renderSongs(songs);
+    }
+
+    loadTagsAndSongs();
+  </script>
 </body>
 </html>
