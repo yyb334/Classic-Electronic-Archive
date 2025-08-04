@@ -12,6 +12,69 @@ let currentSearchQuery = '';
 let currentSortBy = 'title';
 let ascending = true;
 
+// Map of tag variations to their canonical forms for consolidated filtering
+// The keys are lower‑cased and stripped of punctuation for easier matching
+const TAG_NORMALIZATION = {
+  // United Kingdom
+  'uk': 'UK',
+  'united kingdom': 'UK',
+  'great britain': 'UK',
+  'britain': 'UK',
+  'england': 'UK',
+  'scotland': 'UK',
+  'wales': 'UK',
+  'northern ireland': 'UK',
+
+  // United States
+  'usa': 'USA',
+  'us': 'USA',
+  'u s a': 'USA',
+  'u s': 'USA',
+  'united states': 'USA',
+  'united states of america': 'USA',
+  'america': 'USA',
+  'american': 'USA',
+
+  // Germany
+  'germany': 'Germany',
+  'german': 'Germany',
+  'deutschland': 'Germany',
+
+  // Netherlands
+  'netherlands': 'Netherlands',
+  'holland': 'Netherlands',
+  'dutch': 'Netherlands',
+
+  // Belgium
+  'belgium': 'Belgium',
+  'belgian': 'Belgium',
+
+  // France
+  'france': 'France',
+  'french': 'France',
+
+  // Spain
+  'spain': 'Spain',
+  'spanish': 'Spain',
+
+  // Italy
+  'italy': 'Italy',
+  'italian': 'Italy',
+
+  // Russia
+  'russia': 'Russia',
+  'russian': 'Russia'
+};
+
+function normalizeTag(tag) {
+  const lower = (tag || '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9 ]/g, '')
+    .trim();
+  return TAG_NORMALIZATION[lower] || tag;
+}
+
 // Fetch songs.json data
 async function fetchSongs() {
   const response = await fetch('songs.json');
@@ -19,12 +82,12 @@ async function fetchSongs() {
   return await response.json();
 }
 
-// Get unique tags excluding pure 4-digit year tags
+// Get unique normalized tags excluding pure 4-digit year tags
 function getUniqueTags() {
   const allTags = new Set();
 
   allSongs.forEach(song => {
-    (song.tags || []).forEach(tag => {
+    (song.normalizedTags || []).forEach(tag => {
       if (!/^\d{4}$/.test(tag)) { // exclude pure year tags
         allTags.add(tag);
       }
@@ -50,7 +113,7 @@ function getUniqueValues(field) {
 function filterSongsWithOverride(group, overrideValues) {
   return allSongs.filter(song => {
     const tagsToCheck = group === 'tags' ? overrideValues : selectedFilters.tags;
-    if (tagsToCheck.length && !tagsToCheck.some(t => (song.tags || []).includes(t))) return false;
+    if (tagsToCheck.length && !tagsToCheck.some(t => (song.normalizedTags || []).includes(t))) return false;
 
     const countriesToCheck = group === 'countries' ? overrideValues : selectedFilters.countries;
     if (countriesToCheck.length && !countriesToCheck.includes(song.country)) return false;
@@ -146,8 +209,8 @@ function renderSong(song) {
 
   const tagContainer = document.createElement('div');
   tagContainer.className = 'tag-container';
-  if (Array.isArray(song.tags)) {
-    song.tags.forEach(tag => {
+  if (Array.isArray(song.normalizedTags)) {
+    song.normalizedTags.forEach(tag => {
       const span = document.createElement('span');
       span.className = 'tag';
       span.textContent = tag;
@@ -175,7 +238,7 @@ function loadSongList(songs) {
 // Apply all filters and sorting, then update list
 function applyFilters() {
   let filtered = allSongs.filter(song => {
-    if (selectedFilters.tags.length && !selectedFilters.tags.some(t => (song.tags || []).includes(t))) return false;
+    if (selectedFilters.tags.length && !selectedFilters.tags.some(t => (song.normalizedTags || []).includes(t))) return false;
     if (selectedFilters.countries.length && !selectedFilters.countries.includes(song.country)) return false;
     if (selectedFilters.artists.length && !selectedFilters.artists.includes(song.artist)) return false;
     if (selectedFilters.genres.length && !selectedFilters.genres.some(g => (song.genre || []).includes(g))) return false;
@@ -284,6 +347,16 @@ function setupControls() {
 // Initialize app
 async function init() {
   allSongs = await fetchSongs();
+  // Normalize tags for each song to consolidate filter options
+  allSongs.forEach(song => {
+    if (Array.isArray(song.tags)) {
+      const mapped = song.tags.map(normalizeTag);
+      song.normalizedTags = Array.from(new Set(mapped));
+    } else {
+      song.normalizedTags = [];
+    }
+  });
+
   renderAllFilters();
   setupControls();
   applyFilters();
