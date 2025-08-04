@@ -75,6 +75,20 @@ function normalizeTag(tag) {
   return TAG_NORMALIZATION[lower] || tag;
 }
 
+// Map of country variations to their canonical forms
+const COUNTRY_NORMALIZATION = {
+  uk: 'United Kingdom',
+  uklabel: 'United Kingdom',
+  unitedkingdom: 'United Kingdom'
+};
+
+function normalizeCountry(country) {
+  const key = (country || '')
+    .toLowerCase()
+    .replace(/[^a-z]/g, '');
+  return COUNTRY_NORMALIZATION[key] || country;
+}
+
 // Fetch songs.json data
 async function fetchSongs() {
   const response = await fetch('songs.json');
@@ -373,8 +387,12 @@ async function init() {
       song.normalizedTags = [];
     }
 
-    if (typeof song.country === 'string' && song.country.includes('/')) {
-      song.country = song.country.split('/').map(c => c.trim()).filter(Boolean);
+    if (typeof song.country === 'string') {
+      song.country = song.country
+        .split('/')
+        .map(c => normalizeCountry(c.trim()))
+        .filter(Boolean);
+      song.country = [...new Set(song.country)];
     }
   });
 
