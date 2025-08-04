@@ -1,161 +1,209 @@
-/* General body and font */
+/* Import a modern, professional font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Reset and base */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fafafa;
-  color: #222;
-  margin: 1rem 2rem;
-  line-height: 1.5;
+  margin: 0;
+  background-color: #121212;
+  color: #E0E0E0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Header */
 header h1 {
+  margin: 1.5rem 2rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  font-size: 2rem;
-  color: #1a1a1a;
+  font-size: 2.5rem;
+  color: #FFFFFF;
+  letter-spacing: 0.05em;
+  user-select: none;
+  text-shadow: 0 2px 6px rgba(29, 233, 182, 0.4);
 }
 
-/* Search and sort section */
+/* Search and sort container */
 #search-sort {
-  margin-bottom: 1.5rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
+  margin: 0 2rem 1.5rem 2rem;
 }
 
 #search-bar {
-  flex: 1 1 300px;
-  padding: 0.5em 0.7em;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.2s ease-in-out;
+  flex: 1 1 320px;
+  padding: 0.75em 1em;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  border: none;
+  background-color: #1e1e1e;
+  color: #E0E0E0;
+  box-shadow: inset 0 0 5px rgba(29, 233, 182, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#search-bar::placeholder {
+  color: #666;
 }
 
 #search-bar:focus {
-  border-color: #007bff;
   outline: none;
+  background-color: #272727;
+  box-shadow: inset 0 0 8px rgba(29, 233, 182, 0.7);
 }
 
-/* Sort select and button */
+/* Sort dropdown */
 #sort-select {
-  padding: 0.4em 0.7em;
-  font-size: 1rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  padding: 0.6em 1em;
+  border-radius: 10px;
+  border: none;
+  background-color: #1e1e1e;
+  color: #E0E0E0;
+  font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.2s ease-in-out;
+  box-shadow: inset 0 0 5px rgba(29, 233, 182, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #sort-select:focus {
-  border-color: #007bff;
   outline: none;
+  background-color: #272727;
+  box-shadow: inset 0 0 8px rgba(29, 233, 182, 0.7);
 }
 
+/* Sort direction button */
 #sort-direction {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #FFC107 0%, #FF6F61 100%);
   border: none;
-  color: white;
+  color: #121212;
+  font-weight: 700;
   font-size: 1rem;
-  padding: 0.4em 1em;
-  border-radius: 4px;
+  padding: 0.6em 1.4em;
+  border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.6);
+  transition: filter 0.25s ease;
+  user-select: none;
 }
 
 #sort-direction:hover {
-  background-color: #0056b3;
+  filter: brightness(1.1);
 }
 
 /* Filters container */
 #filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  background: #fff;
-  padding: 0.8rem;
-  border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 1.5rem;
+  gap: 1.25rem;
+  margin: 0 2rem 2rem 2rem;
+  background-color: #1b1b1b;
+  padding: 1.25rem 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 0 20px rgba(29, 233, 182, 0.15);
 }
 
 /* Each filter group */
 #filters > div {
-  flex: 1 1 150px;
+  flex: 1 1 160px;
   min-width: 140px;
   max-height: 220px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.9rem;
-  background-color: #fafafa;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  background-color: #232323;
+  border-radius: 14px;
+  padding: 0.8rem 1.2rem;
+  box-shadow: 0 0 8px rgba(29, 233, 182, 0.15);
 }
 
-/* Filter group heading */
+/* Sticky headings */
 #filters h3 {
-  margin-top: 0;
-  margin-bottom: 0.3rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 0.25em;
+  margin: 0 0 0.6rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1DE9B6;
+  border-bottom: 2px solid #1DE9B6;
+  padding-bottom: 0.3rem;
   position: sticky;
   top: 0;
-  background-color: #fafafa;
-  z-index: 2;
+  background-color: #232323;
+  z-index: 10;
+  user-select: none;
 }
 
 /* Checkbox labels */
 label {
   display: block;
-  margin-bottom: 0.2rem;
-  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+  color: #ccc;
   cursor: pointer;
+  transition: color 0.2s ease;
   user-select: none;
 }
 
-/* Checkbox input styling */
+label:hover {
+  color: #1DE9B6;
+}
+
+/* Checkbox styling */
 label input[type="checkbox"] {
-  margin-right: 0.5rem;
+  margin-right: 0.55em;
   cursor: pointer;
-  transform: scale(1.1);
+  transform: scale(1.15);
   vertical-align: middle;
+  accent-color: #1DE9B6;
 }
 
 /* Year inputs */
 #year-filter-section input {
-  width: 70px;
-  padding: 0.25em 0.4em;
-  font-size: 0.85rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-right: 0.5em;
-  transition: border-color 0.2s ease-in-out;
+  width: 75px;
+  padding: 0.35em 0.5em;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  border: none;
+  background-color: #1e1e1e;
+  color: #ddd;
+  box-shadow: inset 0 0 6px rgba(29, 233, 182, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-right: 0.6em;
+}
+
+#year-filter-section input::placeholder {
+  color: #555;
 }
 
 #year-filter-section input:focus {
-  border-color: #007bff;
   outline: none;
+  background-color: #272727;
+  box-shadow: inset 0 0 8px rgba(29, 233, 182, 0.7);
 }
 
 /* Clear Filters button */
 #clear-filters {
-  background-color: #dc3545;
-  color: white;
+  display: block;
+  margin: 0 auto 3rem auto;
+  background: linear-gradient(135deg, #FF6F61 0%, #FFC107 100%);
   border: none;
-  padding: 0.6em 1.3em;
-  border-radius: 6px;
-  font-size: 1rem;
+  color: #121212;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.75em 2.5em;
+  border-radius: 28px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+  transition: filter 0.3s ease;
+  user-select: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 #clear-filters:hover {
-  background-color: #a71d2a;
+  filter: brightness(1.15);
 }
 
 /* Song list styling */
@@ -163,20 +211,27 @@ label input[type="checkbox"] {
   list-style: none;
   padding-left: 0;
   max-width: 900px;
-  margin: 0 auto;
+  margin: 0 auto 4rem auto;
 }
 
 #song-list li {
-  padding: 0.5em 0;
-  border-bottom: 1px solid #ddd;
-  font-size: 1rem;
+  padding: 0.65em 1em;
+  border-bottom: 1px solid rgba(255 255 255 / 0.1);
+  font-size: 1.05rem;
+  transition: background-color 0.3s ease;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+#song-list li:hover {
+  background-color: rgba(29, 233, 182, 0.12);
 }
 
 #song-list li a {
   font-weight: 600;
-  color: #007bff;
+  color: #1DE9B6;
   text-decoration: none;
-  transition: text-decoration 0.2s ease-in-out;
+  transition: text-decoration 0.25s ease;
 }
 
 #song-list li a:hover {
@@ -185,50 +240,62 @@ label input[type="checkbox"] {
 
 /* Tag container inside song list item */
 .tag-container {
-  margin-top: 0.3em;
+  margin-top: 0.35em;
 }
 
 .tag {
   display: inline-block;
-  background-color: #e1e1e1;
-  color: #444;
-  border-radius: 4px;
-  padding: 0.15em 0.5em;
-  margin-right: 0.4em;
+  background-color: rgba(29, 233, 182, 0.25);
+  color: #1DE9B6;
+  border-radius: 8px;
+  padding: 0.2em 0.55em;
+  margin-right: 0.45em;
   font-size: 0.8rem;
   user-select: none;
+  transition: background-color 0.3s ease;
 }
 
-/* Scrollbar styling for filter groups (for modern browsers) */
+.tag:hover {
+  background-color: rgba(29, 233, 182, 0.4);
+}
+
+/* Scrollbar styling for filter groups (modern browsers) */
 #filters > div::-webkit-scrollbar {
   width: 8px;
 }
 
 #filters > div::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 4px;
+  background-color: rgba(29, 233, 182, 0.3);
+  border-radius: 6px;
 }
 
 #filters > div::-webkit-scrollbar-thumb:hover {
-  background-color: #aaa;
+  background-color: rgba(29, 233, 182, 0.5);
 }
 
 /* Responsive adjustments */
-@media (max-width: 700px) {
-  #filters {
-    flex-direction: column;
-  }
-
-  #filters > div {
-    max-height: 200px;
+@media (max-width: 750px) {
+  header h1 {
+    font-size: 2rem;
+    margin: 1rem;
   }
 
   #search-sort {
     flex-direction: column;
     align-items: stretch;
+    margin: 1rem;
   }
 
-  #search-bar {
-    max-width: 100%;
+  #filters {
+    flex-direction: column;
+    margin: 1rem;
+  }
+
+  #filters > div {
+    max-height: 180px;
+  }
+
+  #clear-filters {
+    margin: 2rem auto 3rem auto;
   }
 }
