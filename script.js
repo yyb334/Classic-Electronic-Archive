@@ -116,7 +116,10 @@ function filterSongsWithOverride(group, overrideValues) {
     if (tagsToCheck.length && !tagsToCheck.some(t => (song.normalizedTags || []).includes(t))) return false;
 
     const countriesToCheck = group === 'countries' ? overrideValues : selectedFilters.countries;
-    if (countriesToCheck.length && !countriesToCheck.includes(song.country)) return false;
+    if (countriesToCheck.length) {
+      const songCountries = Array.isArray(song.country) ? song.country : [song.country];
+      if (!countriesToCheck.some(c => songCountries.includes(c))) return false;
+    }
 
     const artistsToCheck = group === 'artists' ? overrideValues : selectedFilters.artists;
     if (artistsToCheck.length && !artistsToCheck.includes(song.artist)) return false;
@@ -239,7 +242,10 @@ function loadSongList(songs) {
 function applyFilters() {
   let filtered = allSongs.filter(song => {
     if (selectedFilters.tags.length && !selectedFilters.tags.some(t => (song.normalizedTags || []).includes(t))) return false;
-    if (selectedFilters.countries.length && !selectedFilters.countries.includes(song.country)) return false;
+    if (selectedFilters.countries.length) {
+      const songCountries = Array.isArray(song.country) ? song.country : [song.country];
+      if (!selectedFilters.countries.some(c => songCountries.includes(c))) return false;
+    }
     if (selectedFilters.artists.length && !selectedFilters.artists.includes(song.artist)) return false;
     if (selectedFilters.genres.length && !selectedFilters.genres.some(g => (song.genre || []).includes(g))) return false;
     if (selectedFilters.subgenres.length && !selectedFilters.subgenres.some(sg => (song.subgenre || []).includes(sg))) return false;
@@ -347,13 +353,28 @@ function setupControls() {
 // Initialize app
 async function init() {
   allSongs = await fetchSongs();
-  // Normalize tags for each song to consolidate filter options
+  // Normalize tags and split combined values; split countries into arrays
   allSongs.forEach(song => {
     if (Array.isArray(song.tags)) {
-      const mapped = song.tags.map(normalizeTag);
-      song.normalizedTags = Array.from(new Set(mapped));
+      const tagSet = new Set();
+      song.tags.forEach(tag => {
+        if (typeof tag === 'string' && tag.includes('/')) {
+          tag.split('/').forEach(part => {
+            const norm = normalizeTag(part.trim());
+            if (norm) tagSet.add(norm);
+          });
+        } else {
+          const norm = normalizeTag(tag);
+          if (norm) tagSet.add(norm);
+        }
+      });
+      song.normalizedTags = Array.from(tagSet);
     } else {
       song.normalizedTags = [];
+    }
+
+    if (typeof song.country === 'string' && song.country.includes('/')) {
+      song.country = song.country.split('/').map(c => c.trim()).filter(Boolean);
     }
   });
 

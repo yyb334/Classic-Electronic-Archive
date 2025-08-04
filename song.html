@@ -297,7 +297,7 @@
     function renderDetails(song, container) {
       container.innerHTML = '';
       const details = {
-        'Country': song.country || 'Unknown',
+        'Country': Array.isArray(song.country) ? song.country.join(', ') : (song.country || 'Unknown'),
         'Genres': song.genre || 'N/A',
         'Subgenres': song.subgenre || 'N/A',
         'Label': song.label || 'N/A',
