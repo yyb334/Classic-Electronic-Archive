@@ -296,7 +296,7 @@
       const text = (
         (song.description || '') + ' ' +
         (Array.isArray(song.tags) ? song.tags.join(' ') : '') + ' ' +
-        (song.subgenre || '')
+        Array.isArray(song.subgenre) ? song.subgenre.join(' ') : (song.subgenre || '')
       ).toLowerCase();
       const moods = new Set();
       for (const [mood, keywords] of Object.entries(MOOD_KEYWORDS)) {
@@ -322,7 +322,7 @@
       const details = {
         'Country': Array.isArray(song.country) ? song.country.join(', ') : (song.country || 'Unknown'),
         'Genres': song.genre || 'N/A',
-        'Subgenres': song.subgenre || 'N/A',
+        'Subgenres': Array.isArray(song.subgenre) && song.subgenre.length ? song.subgenre.join(', ') : (song.subgenre || 'N/A'),
         'Label': song.label || 'N/A',
         'Aliases': (Array.isArray(song.aliases) && song.aliases.length) ? song.aliases.join(', ') : 'None',
         'Chart Info': song.chartInfo || 'None',
