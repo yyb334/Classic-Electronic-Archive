@@ -141,39 +141,14 @@ function consolidateTagForFilter(tag) {
   return Array.from(new Set(results));
 }
 
-// Group specific subgenre strings into broader buckets for filtering.
-// Each pattern searches for keywords within a subgenre name.
-const SUBGENRE_PATTERNS = [
-  { canonical: 'Trance', pattern: /trance/ },
-  { canonical: 'House', pattern: /house/ },
-  { canonical: 'Techno', pattern: /techno/ },
-  { canonical: 'Hardcore', pattern: /hardcore|gabber/ },
-  { canonical: 'Breakbeat', pattern: /breakbeat|jungle|drum.*bass/ },
-  { canonical: 'Ambient', pattern: /ambient|chill|downtempo|dream/ },
-  { canonical: 'Industrial', pattern: /industrial/ },
-  { canonical: 'Electro', pattern: /\belectro\b/ }
-];
-
-// Convert a subgenre string into one or more consolidated filter buckets.
-// Falls back to the original value if no pattern matches so nothing is lost.
+// Convert a subgenre string into an array of distinct subgenres.
+// Supports both slash-delimited strings and arrays in the source data.
 function consolidateSubgenreForFilter(subgenre) {
   if (!subgenre) return [];
   const parts = Array.isArray(subgenre)
     ? subgenre
     : subgenre.split('/').map(s => s.trim()).filter(Boolean);
-  const results = new Set();
-  parts.forEach(part => {
-    const lower = part.toLowerCase();
-    let matched = false;
-    SUBGENRE_PATTERNS.forEach(({ canonical, pattern }) => {
-      if (pattern.test(lower)) {
-        results.add(canonical);
-        matched = true;
-      }
-    });
-    if (!matched) results.add(part);
-  });
-  return Array.from(results);
+  return Array.from(new Set(parts));
 }
 
 // Map of country variations to their canonical forms
