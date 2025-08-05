@@ -92,7 +92,7 @@ function deriveMoods(song) {
   const text = (
     (song.description || '') + ' ' +
     (Array.isArray(song.tags) ? song.tags.join(' ') : '') + ' ' +
-    (song.subgenre || '')
+    (Array.isArray(song.subgenre) ? song.subgenre.join(' ') : (song.subgenre || ''))
   ).toLowerCase();
   const moods = new Set();
   for (const [mood, keywords] of Object.entries(MOOD_KEYWORDS)) {
