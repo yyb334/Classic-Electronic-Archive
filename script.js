@@ -141,6 +141,41 @@ function consolidateTagForFilter(tag) {
   return Array.from(new Set(results));
 }
 
+// Group specific subgenre strings into broader buckets for filtering.
+// Each pattern searches for keywords within a subgenre name.
+const SUBGENRE_PATTERNS = [
+  { canonical: 'Trance', pattern: /trance/ },
+  { canonical: 'House', pattern: /house/ },
+  { canonical: 'Techno', pattern: /techno/ },
+  { canonical: 'Hardcore', pattern: /hardcore|gabber/ },
+  { canonical: 'Breakbeat', pattern: /breakbeat|jungle|drum.*bass/ },
+  { canonical: 'Ambient', pattern: /ambient|chill|downtempo|dream/ },
+  { canonical: 'Industrial', pattern: /industrial/ },
+  { canonical: 'Electro', pattern: /\belectro\b/ }
+];
+
+// Convert a subgenre string into one or more consolidated filter buckets.
+// Falls back to the original value if no pattern matches so nothing is lost.
+function consolidateSubgenreForFilter(subgenre) {
+  if (!subgenre) return [];
+  const parts = Array.isArray(subgenre)
+    ? subgenre
+    : subgenre.split('/').map(s => s.trim()).filter(Boolean);
+  const results = new Set();
+  parts.forEach(part => {
+    const lower = part.toLowerCase();
+    let matched = false;
+    SUBGENRE_PATTERNS.forEach(({ canonical, pattern }) => {
+      if (pattern.test(lower)) {
+        results.add(canonical);
+        matched = true;
+      }
+    });
+    if (!matched) results.add(part);
+  });
+  return Array.from(results);
+}
+
 // Map of country variations to their canonical forms
 const COUNTRY_NORMALIZATION = {
   uk: 'United Kingdom',
@@ -223,7 +258,7 @@ function filterSongsWithOverride(group, overrideValues) {
     if (genresToCheck.length && !genresToCheck.some(g => (song.genre || []).includes(g))) return false;
 
     const subgenresToCheck = group === 'subgenres' ? overrideValues : selectedFilters.subgenres;
-    if (subgenresToCheck.length && !subgenresToCheck.some(sg => (song.subgenre || []).includes(sg))) return false;
+    if (subgenresToCheck.length && !subgenresToCheck.some(sg => (song.filterSubgenres || []).includes(sg))) return false;
 
     const moodsToCheck = group === 'moods' ? overrideValues : selectedFilters.moods;
     if (moodsToCheck.length && !moodsToCheck.some(m => (song.moods || []).includes(m))) return false;
@@ -297,7 +332,7 @@ function renderAllFilters() {
   renderCheckboxFilterWithCounts('artist-list', getUniqueValues('artist'), 'artists');
   renderCheckboxFilterWithCounts('label-list', getUniqueValues('label'), 'labels');
   renderCheckboxFilterWithCounts('genre-list', getUniqueValues('genre'), 'genres');
-  renderCheckboxFilterWithCounts('subgenre-list', getUniqueValues('subgenre'), 'subgenres');
+  renderCheckboxFilterWithCounts('subgenre-list', getUniqueValues('filterSubgenres'), 'subgenres');
   renderCheckboxFilterWithCounts('mood-list', getUniqueValues('moods'), 'moods');
 }
 
@@ -360,7 +395,7 @@ function applyFilters() {
       if (!selectedFilters.labels.some(l => songLabels.includes(l))) return false;
     }
     if (selectedFilters.genres.length && !selectedFilters.genres.some(g => (song.genre || []).includes(g))) return false;
-    if (selectedFilters.subgenres.length && !selectedFilters.subgenres.some(sg => (song.subgenre || []).includes(sg))) return false;
+    if (selectedFilters.subgenres.length && !selectedFilters.subgenres.some(sg => (song.filterSubgenres || []).includes(sg))) return false;
     if (selectedFilters.moods.length && !selectedFilters.moods.some(m => (song.moods || []).includes(m))) return false;
     if (selectedFilters.yearMin !== null && (song.releaseYear === undefined || song.releaseYear < selectedFilters.yearMin)) return false;
     if (selectedFilters.yearMax !== null && (song.releaseYear === undefined || song.releaseYear > selectedFilters.yearMax)) return false;
@@ -518,6 +553,9 @@ async function init() {
         .filter(Boolean);
       song.country = [...new Set(song.country)];
     }
+
+    // Build subgenre buckets used for filtering
+    song.filterSubgenres = consolidateSubgenreForFilter(song.subgenre);
 
     // Derive moods from description, tags and subgenre
     song.moods = deriveMoods(song);
